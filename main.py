@@ -45,12 +45,12 @@ async def test(ctx):
 async def test(ctx, year):
     if year.isdigit():
         year = int(year)
+        if year in years:
+            await ctx.send(years[year])
+        else:
+            await ctx.send('We do not have the year ' + str(year) + ' in our database, please try another year.')
     else:
         await ctx.send('Please input the year as an integer, for example, "rules 2016"')
-    if year in years:
-        await ctx.send(years[year])
-    else:
-        await ctx.send('We do not have the year ' + str(year) + ' in our database, please try another year.')
 
 
 bot.run(TOKEN)
