@@ -13,4 +13,13 @@ bot = commands.Bot(command_prefix='!')
 async def test(ctx):
     await ctx.send('test success!')
 
+@bot.command(name='rules', help='sends the DBF rules for a particular year')
+async def test(ctx, year: int):
+    if year == 1997:
+        await ctx.send('https://github.com/WUDBF/WUDBF2021/blob/master/Rules%20Archive/1997_dbf_rules.pdf')
+    if year == 1998:
+        await ctx.send('https://github.com/WUDBF/WUDBF2021/blob/master/Rules%20Archive/1998_dbf_rules.pdf')
+    if year == 1999:
+        await ctx.send('https://github.com/WUDBF/WUDBF2021/blob/master/Rules%20Archive/1999_dbf_rules.pdf')
+
 bot.run(TOKEN)
