@@ -1,7 +1,6 @@
 # bot.py
 import asyncio
 import os
-from datetime import datetime
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -13,6 +12,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 bot = commands.Bot(command_prefix='!')
+
 
 @bot.command(name='test2', help='responds with "test success!" if the bot is running correctly.')
 async def test(ctx):
@@ -45,6 +45,7 @@ async def delayedSend(ctx, event):
     Event.list_of_events.append(event)
     await asyncio.sleep(event.secondsLeft())
     await ctx.send(event.message)
+    Event.list_of_events.remove(event)
 
 
 bot.run(TOKEN)
