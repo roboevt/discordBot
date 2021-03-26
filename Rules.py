@@ -1,3 +1,6 @@
+# Simply a dictionary mapping years to links.
+# To add another year add another entry with the year and new link.
+
 class Rules:
     years = {1997: 'https://github.com/WUDBF/WUDBF2021/blob/master/Rules%20Archive/1997_dbf_rules.pdf',
              1998: 'https://github.com/WUDBF/WUDBF2021/blob/master/Rules%20Archive/1998_dbf_rules.pdf',

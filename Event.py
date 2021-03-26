@@ -7,13 +7,11 @@ class Event:
         self.channelID = channelID
         self.message = message
         self.time = time
+        self.number = 0
 
     @classmethod
     def fromDateArgs(event, channelID, message, year, month, day, hour, minute):
         return event(channelID, message, datetime(year, month, day, hour, minute, 0))
-
-    def secondsLeft(self):
-        return self.time.timestamp() - datetime.now().timestamp()
 
     @staticmethod
     def checkArgs(channelID, message, year, month, day, hour, minute):
@@ -52,4 +50,8 @@ class Event:
 
         return Event(channelID, message, time)
 
+    def secondsLeft(self):
+        return self.time.timestamp() - datetime.now().timestamp()
 
+    def toString(self):
+        return str(self.number) + ' ' + self.message + ' ' + self.time.strftime("%m/%d/%Y, %H:%M:%S")
