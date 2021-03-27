@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 import Event
 import pickle
+import os.path
+from os import path
 
 
 class EventManager:
@@ -66,8 +68,13 @@ class EventManager:
             pickle.dump(self.eventsList, outFile)
 
     def readFromFile(self):
-        if os.stat('events.p').st_size != 0:
-            with open('events.p', 'rb') as inFile:
-                self.eventsList = pickle.load(inFile)
-            print(str(len(self.eventsList)) + ' event(s) read from file.')
-            self.sortEvents()
+        if path.exists('events.p'):
+            if os.stat('events.p').st_size != 0:
+                with open('events.p', 'rb') as inFile:
+                    self.eventsList = pickle.load(inFile)
+                print(str(len(self.eventsList)) + ' event(s) read from file.')
+                self.sortEvents()
+        else:
+            print('No backup file found, creating an empty one.')
+            with open('events.p', 'wb') as outFile:
+                pickle.dump('')
