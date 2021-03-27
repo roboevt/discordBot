@@ -47,31 +47,35 @@ async def on_command_error(ctx, error):
 async def test(ctx):
     await ctx.send('test success!')
 
+
 @bot.command(name='checkin', help='Lets people check into the DBF space.')
 async def checkin(ctx):
-    if ctx.message.author.display_name in person_list.occupants: 
+    if ctx.message.author.display_name in person_list.occupants:
         await ctx.send("You're already checked in!")
     else:
         if len(person_list.occupants) >= max_occupancy:
             print("too many people")
             await notifyPeople(ctx)
-            await ctx.send("Warning: There are already " + str(len(person_list.occupants)) + " people in the space! There can only be " + str(max_occupancy) + " people at a time!")
+            await ctx.send("Warning: There are already " + str(len(person_list.occupants)) +
+                           " people in the space! There can only be " + str(max_occupancy) + " people at a time!")
         move = Movement(ctx.message.author.display_name, True)
         person_list.movements.append(move)
         person_list.occupants.append(ctx.message.author.display_name)
         person_list.synchronize()
         await ctx.send('You are all checked in! Welcome to the DBF space!')
 
+
 @bot.command(name='checkout', help='Lets people check out the DBF space.')
 async def checkin(ctx):
-    if ctx.message.author.display_name in person_list.occupants :
+    if ctx.message.author.display_name in person_list.occupants:
         move = Movement(ctx.message.author.display_name, False)
         person_list.movements.append(move)
         person_list.occupants.remove(ctx.message.author.display_name)
         person_list.synchronize()
         await ctx.send('You are all checked out! Thanks for visiting the DBF space!')
-    else :
+    else:
         await ctx.send("You aren't checked in!")
+
 
 @bot.command(name='resetarchive', help='Resets the recent archive')
 async def resetarchive(ctx):
@@ -82,14 +86,18 @@ async def resetarchive(ctx):
         fp.write(to_add)
     await ctx.send('The short term archive was reset')
 
-@bot.command(name= 'getdetailedarchive', help='Returns a text file with all recorded checkins and checkouts as well as recent archive resets')
+
+@bot.command(name='getdetailedarchive',
+             help='Returns a text file with all recorded checkins and checkouts as well as recent archive resets')
 async def getspacelogs(ctx):
     with open('bigarchive.txt', 'r') as fp:
         await ctx.send(file=discord.File(fp, 'detailedArchive.txt'))
 
+
 @bot.command(name='getrecentarchive', help='Returns a text file with checkins and checkouts')
 async def getspacelogs(ctx):
     await person_list.return_file(ctx)
+
 
 @bot.command(name='rules', help='sends the DBF rules for a particular year')
 async def rules(ctx, year):
@@ -124,7 +132,8 @@ async def delete(ctx, numberToDelete):
         numberToDelete = int(numberToDelete)
     for eventToDelete in events.eventsList:
         if eventToDelete.number == numberToDelete:
-            await ctx.send('Event ' + str(eventToDelete.number) + ' with message "' + eventToDelete.message + '" deleted.')
+            await ctx.send(
+                'Event ' + str(eventToDelete.number) + ' with message "' + eventToDelete.message + '" deleted.')
             events.removeEvent(eventToDelete)
             return
     await ctx.send('That event was not found. Use the "list" command to see event numbers.')
@@ -153,6 +162,7 @@ async def delayedSend(event):
             await bot.get_channel(event.channelID).send(event.message)
             print('sending: ' + event.message)
     events.removeEvent(event)
+
 
 async def notifyPeople(ctx):
     for person in person_list.ppltonotify:
