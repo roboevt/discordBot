@@ -2,6 +2,7 @@
 import asyncio
 import os
 import discord
+from datetime import datetime
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -9,6 +10,8 @@ from dotenv import load_dotenv
 from Event import Event
 from Rules import Rules
 from EventManager import EventManager
+from SpaceManager import SpaceManager
+from Movement import Movement
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -17,6 +20,7 @@ embedDefaultColor = 0x00aff4
 bot = commands.Bot(command_prefix='!')
 
 events = EventManager()
+person_list = SpaceManager()
 
 
 @bot.event
@@ -42,6 +46,38 @@ async def on_command_error(ctx, error):
 async def test(ctx):
     await ctx.send('test success!')
 
+@bot.command(name='checkin', help='Lets people check into the DBF space.')
+async def checkin(ctx):
+    move = Movement(ctx.message.author.display_name, True)
+    person_list.movements.append(move)
+    person_list.synchronize()
+    print("out of sync")
+    await ctx.send('You are all checked in! Welcome to the DBF space!')
+
+@bot.command(name='checkout', help='Lets people check out the DBF space.')
+async def checkin(ctx):
+    move = Movement(ctx.message.author.display_name, False)
+    person_list.movements.append(move)
+    person_list.synchronize()
+    await ctx.send('You are all checked out! Thanks for visiting the DBF space!')
+
+@bot.command(name='resetarchive', help='Resets the recentspacelogs')
+async def resetarchive(ctx):
+    global person_list
+    person_list = SpaceManager()
+    with open('bigarchive.txt', 'a') as fp:
+        to_add = "The short term archive was reset at " + datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+        fp.write(to_add)
+    await ctx.send('The short term archive was reset')
+
+@bot.command(name= 'getdetailedspacelogs', help='Returns a text file with checkins and checkouts')
+async def getspacelogs(ctx):
+    with open('bigarchive.txt', 'r') as fp:
+        await ctx.send(file=discord.File(fp, 'detailedArchive.txt'))
+
+@bot.command(name='getrecentspacelogs', help='Returns a text file with checkins and checkouts')
+async def getspacelogs(ctx):
+    await person_list.return_file(ctx)
 
 @bot.command(name='rules', help='sends the DBF rules for a particular year')
 async def rules(ctx, year):
