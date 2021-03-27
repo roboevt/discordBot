@@ -38,12 +38,12 @@ async def on_command_error(ctx, error):
         await ctx.send('There was an issue with the parameters of that command. Check !help for more information')
 
 
-@bot.command(name='test2', help='responds with "test success!" if the bot is running correctly.')
+@bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
 async def test(ctx):
-    await ctx.send('test 2 success!')
+    await ctx.send('test success!')
 
 
-@bot.command(name='rules2', help='sends the DBF rules for a particular year')
+@bot.command(name='rules', help='sends the DBF rules for a particular year')
 async def rules(ctx, year):
     if year.isdigit():
         year = int(year)
