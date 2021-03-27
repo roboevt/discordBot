@@ -21,8 +21,8 @@ class EventManager:
         try:
             self.eventsList.remove(event)
             print(event.toString() + ' removed from list')
-        except ValueError:
-            return
+        except ValueError:  # if the event isn't in the list
+            return  # then it's already removed, no need to worry (maybe come back to this)
         self.sortEvents()
         self.saveToFile()
 

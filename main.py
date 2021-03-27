@@ -101,8 +101,9 @@ async def delayedSend(event):
     time = event.secondsLeft()
     if time > 0:
         await asyncio.sleep(event.secondsLeft())
-        await bot.get_channel(event.channelID).send(event.message)
-        print('sending: ' + event.message)
+        if event in events.eventsList:
+            await bot.get_channel(event.channelID).send(event.message)
+            print('sending: ' + event.message)
     events.removeEvent(event)
 
 
