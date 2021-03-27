@@ -21,6 +21,7 @@ bot = commands.Bot(command_prefix='!')
 
 events = EventManager()
 person_list = SpaceManager()
+max_occupancy = 1
 
 
 @bot.event
@@ -48,18 +49,29 @@ async def test(ctx):
 
 @bot.command(name='checkin', help='Lets people check into the DBF space.')
 async def checkin(ctx):
-    move = Movement(ctx.message.author.display_name, True)
-    person_list.movements.append(move)
-    person_list.synchronize()
-    print("out of sync")
-    await ctx.send('You are all checked in! Welcome to the DBF space!')
+    if ctx.message.author.display_name in person_list.occupants: 
+        await ctx.send("You're already checked in!")
+    else:
+        if len(person_list.occupants) >= max_occupancy:
+            print("too many people")
+            await notifyPeople(ctx)
+            await ctx.send("Warning: There are already " + str(len(person_list.occupants)) + " people in the space! There can only be " + str(max_occupancy) + " people at a time!")
+        move = Movement(ctx.message.author.display_name, True)
+        person_list.movements.append(move)
+        person_list.occupants.append(ctx.message.author.display_name)
+        person_list.synchronize()
+        await ctx.send('You are all checked in! Welcome to the DBF space!')
 
 @bot.command(name='checkout', help='Lets people check out the DBF space.')
 async def checkin(ctx):
-    move = Movement(ctx.message.author.display_name, False)
-    person_list.movements.append(move)
-    person_list.synchronize()
-    await ctx.send('You are all checked out! Thanks for visiting the DBF space!')
+    if ctx.message.author.display_name in person_list.occupants :
+        move = Movement(ctx.message.author.display_name, False)
+        person_list.movements.append(move)
+        person_list.occupants.remove(ctx.message.author.display_name)
+        person_list.synchronize()
+        await ctx.send('You are all checked out! Thanks for visiting the DBF space!')
+    else :
+        await ctx.send("You aren't checked in!")
 
 @bot.command(name='resetarchive', help='Resets the recent archive')
 async def resetarchive(ctx):
@@ -141,6 +153,12 @@ async def delayedSend(event):
             await bot.get_channel(event.channelID).send(event.message)
             print('sending: ' + event.message)
     events.removeEvent(event)
+
+async def notifyPeople(ctx):
+    for person in person_list.ppltonotify:
+        converter = commands.MemberConverter()
+        member = await converter.convert(ctx, person)
+        await member.send("The space is over capacity!")
 
 
 bot.run(TOKEN)
