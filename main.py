@@ -61,7 +61,7 @@ async def checkin(ctx):
     person_list.synchronize()
     await ctx.send('You are all checked out! Thanks for visiting the DBF space!')
 
-@bot.command(name='resetarchive', help='Resets the recentspacelogs')
+@bot.command(name='resetarchive', help='Resets the recent archive')
 async def resetarchive(ctx):
     global person_list
     person_list = SpaceManager()
@@ -70,12 +70,12 @@ async def resetarchive(ctx):
         fp.write(to_add)
     await ctx.send('The short term archive was reset')
 
-@bot.command(name= 'getdetailedspacelogs', help='Returns a text file with checkins and checkouts')
+@bot.command(name= 'getdetailedarchive', help='Returns a text file with all recorded checkins and checkouts as well as recent archive resets')
 async def getspacelogs(ctx):
     with open('bigarchive.txt', 'r') as fp:
         await ctx.send(file=discord.File(fp, 'detailedArchive.txt'))
 
-@bot.command(name='getrecentspacelogs', help='Returns a text file with checkins and checkouts')
+@bot.command(name='getrecentarchive', help='Returns a text file with checkins and checkouts')
 async def getspacelogs(ctx):
     await person_list.return_file(ctx)
 
