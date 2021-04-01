@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
-import Event
+import dateparser
+from Event import Event
+import asyncio
 import pickle
 import os.path
 from os import path
@@ -8,73 +10,41 @@ from os import path
 
 class EventManager:
     def __init__(self):
-        self.eventsList = []
-        self.readFromFile()
-        self.sortEvents()
-        self.checkEvents()
+        self.dictionary = {}
 
-    def addEvent(self, event):
-        print(event.toString() + ' added to list')
-        self.eventsList.append(event)
-        self.sortEvents()
-        self.saveToFile()
+    async def addEvent(self, ctx, message, time):
+        time = dateparser.parse(time)
+        eventAdded = Event(ctx, message, time)
+        eventAdded.future = asyncio.create_task(self.delayedSend(eventAdded, ctx, message, time))
+        print(f"hash: {hash(eventAdded)}")
+        self.dictionary[hash(eventAdded)] = eventAdded
+
+    async def delayedSend(self, event, ctx, message, time):
+        timeDeltaSend = time - datetime.now()
+        print(f"sending followup in {timeDeltaSend.total_seconds()}")
+        await asyncio.sleep(timeDeltaSend.total_seconds())
+        print('sending followup')
+        await ctx.send(message)
+        self.removeEvent(event)
 
     def removeEvent(self, event):
-        try:
-            self.eventsList.remove(event)
-            print(event.toString() + ' removed from list')
-        except ValueError:  # if the event isn't in the list
-            return  # then it's already removed, no need to worry (maybe come back to this)
-        self.sortEvents()
-        self.saveToFile()
-
-    def sortEvents(self):
-        print('Sorting ' + str(len(self.eventsList)) + ' event(s).')
-        self.eventsList.sort(key=lambda eventToSort: eventToSort.time)
-        i = 0
-        for event in self.eventsList:
-            i += 1
-            event.number = i
+        event.future.cancel()
+        del self.dictionary[hash(event)]
 
     def listEvents(self):
-        if len(self.eventsList) != 0:
-            # eventString = '__**Upcoming events:**__ \n'
-            eventString = ''
-            for event in self.eventsList:
-                eventString += str(event.number) + ':\t'
-                eventString += '*' + event.message + '*'
-                eventString += '\t'
-                eventString += event.time.strftime("%m/%d/%Y, %H:%M:%S")
-                eventString += '\n\n'
-            eventString += ''
-            return eventString
-        else:
-            return 'No upcoming events.'
+        eventString = ''
+        if len(self.dictionary) == 0:
+            eventString = 'No upcoming events'
+        for event in self.dictionary.items():
+            eventString += f"*{hash(event[1])}* \t {event[1].message} \t {event[1].time.strftime('%m/%d/%Y, %H:%M:%S')} \n"
+        return eventString
+
+    def deleteEvent(self, eventKey):
+        print(self.dictionary)
+        self.removeEvent(self.dictionary[int(eventKey)])
+
+    def numEvents(self):
+        return len(self.dictionary)
 
     def clearEvents(self):
-        print(str(len(self.eventsList)) + ' event(s) cleared')
-        self.eventsList.clear()
-
-    def checkEvents(self):
-        for eventToCheck in self.eventsList:
-            if eventToCheck.secondsLeft() < 0:
-                print('Event missed during down time: ' + eventToCheck.toString())
-                self.removeEvent(eventToCheck)
-
-    def saveToFile(self):
-        print('Saved ' + str(len(self.eventsList)) + ' event(s) to file.')
-        self.sortEvents()
-        with open('events.p', 'wb') as outFile:
-            pickle.dump(self.eventsList, outFile)
-
-    def readFromFile(self):
-        if path.exists('events.p'):
-            if os.stat('events.p').st_size != 0:
-                with open('events.p', 'rb') as inFile:
-                    self.eventsList = pickle.load(inFile)
-                print(str(len(self.eventsList)) + ' event(s) read from file.')
-                self.sortEvents()
-        else:
-            print('No backup file found, creating an empty one.')
-            with open('events.p', 'wb') as outFile:
-                pickle.dump('')
+        self.dictionary.clear()

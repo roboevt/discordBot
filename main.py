@@ -13,25 +13,26 @@ from EventManager import EventManager
 from SpaceManager import SpaceManager
 from Movement import Movement
 
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-embedDefaultColor = 0x00aff4
-
-bot = commands.Bot(command_prefix='!')
-
-events = EventManager()
-person_list = SpaceManager()
-max_occupancy = 1
+if __name__ == "__main__":
+    print('in setup')
+    load_dotenv()
+    TOKEN = os.getenv('DISCORD_TOKEN')
+    embedDefaultColor = os.getenv('embedDefaultColor')
+    bot = commands.Bot(command_prefix=os.getenv('command_prefix'))
+    print(os.getenv('command_prefix'))
+    events = EventManager()
+    person_list = SpaceManager()
+    max_occupancy = os.getenv('max_occupancy')
 
 
 @bot.event
 async def on_ready():
     print('Program started')
-    for eventToSend in events.eventsList:
-        await delayedSend(eventToSend)
+    #for eventToSend in events.eventsList:
+    #    await delayedSend(eventToSend)
 
 
-@bot.event
+"""@bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send('That command is not recognized, please try again.')
@@ -41,10 +42,10 @@ async def on_command_error(ctx, error):
             or isinstance(error, commands.TooManyArguments) \
             or isinstance(error, commands.MissingRequiredArgument):
         await ctx.send('There was an issue with the parameters of that command. Check !help for more information')
-
+"""
 
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
-async def test(ctx):
+async def test2(ctx):
     await ctx.send('test success!')
 
 
@@ -116,52 +117,32 @@ async def rules(ctx, year):
 
 
 @bot.command(name='create', help='Creates a future event with a specific message.')
-async def reminder(ctx, message, year, month, day, hour, minute):
-    event = Event.checkArgs(ctx.channel.id, message, year, month, day, hour, minute)
-    if isinstance(event, str):  # if checkArgs() returned an error string, send it
-        await ctx.send(event)
-    else:  # if it did not return a string, it returned a new Event object, so process that
-        events.addEvent(event)
-        await ctx.send('message received, sending follow up after ' + str(round(event.secondsLeft(), 0)) + ' seconds')
-        await delayedSend(event)
+async def create(ctx, message, time):
+    await events.addEvent(ctx, message, time)
 
 
 @bot.command(name='delete', help='Deletes an event. Ex: !delete 2. Use !list to get event numbers.')
-async def delete(ctx, numberToDelete):
-    if numberToDelete.isdigit():
-        numberToDelete = int(numberToDelete)
-    for eventToDelete in events.eventsList:
-        if eventToDelete.number == numberToDelete:
-            await ctx.send(
-                'Event ' + str(eventToDelete.number) + ' with message "' + eventToDelete.message + '" deleted.')
-            events.removeEvent(eventToDelete)
-            return
-    await ctx.send('That event was not found. Use the "list" command to see event numbers.')
+async def delete(ctx, eventKey):
+    try:
+        events.deleteEvent(eventKey)
+        await ctx.send('Event deleted.')
+    except KeyError:
+        await ctx.send('That event was not found.')
+    except ValueError:
+        await ctx.send('Please enter the number from the list of the reminder you would like to delete')
 
 
 @bot.command(name='list', help='Lists all upcoming events with message and time')
 async def listEvents(ctx):
-    stringEvents = events.listEvents()
-    listEmbed = discord.Embed(title='Upcoming events:', description=stringEvents, color=embedDefaultColor)
+    listEmbed = discord.Embed(title='Upcoming events:', description=events.listEvents(), color=0x00aff4)#change color bacl
     await ctx.send(embed=listEmbed)
-    # await ctx.send('>>> '+ stringEvents)
 
 
 @bot.command(name='clear', help='Clears all upcoming events')
 async def clear(ctx):
-    amount = len(events.eventsList)
+    amount = events.numEvents()
     events.clearEvents()
     await ctx.send(str(amount) + ' event(s) cleared. There are now 0 upcoming events.')
-
-
-async def delayedSend(event):
-    time = event.secondsLeft()
-    if time > 0:
-        await asyncio.sleep(event.secondsLeft())
-        if event in events.eventsList:
-            await bot.get_channel(event.channelID).send(event.message)
-            print('sending: ' + event.message)
-    events.removeEvent(event)
 
 
 async def notifyPeople(ctx):
@@ -171,4 +152,5 @@ async def notifyPeople(ctx):
         await member.send("The space is over capacity!")
 
 
-bot.run(TOKEN)
+if __name__ == '__main__':
+    bot.run(TOKEN)
