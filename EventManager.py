@@ -34,9 +34,10 @@ class EventManager:
     def listEvents(self):
         eventString = ''
         if len(self.dictionary) == 0:
-            eventString = 'No upcoming events'
+            eventString = 'None'
         for event in self.dictionary.items():
-            eventString += f"*{hash(event[1])}* \t {event[1].message} \t {event[1].time.strftime('%m/%d/%Y, %H:%M:%S')} \n"
+            eventString += f"\nID: {hash(event[1])} \t Date: {event[1].time.strftime('%m/%d/%Y %H:%M')}" \
+                           f"\nMessage: '{event[1].message}'\n"
         return eventString
 
     def deleteEvent(self, eventKey):

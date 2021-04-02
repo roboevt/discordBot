@@ -13,7 +13,8 @@ class Event:
         return all((self.ctx == other.ctx, self.message == other.message, self.time == other.time))
 
     def __hash__(self):
-        return hash((self.ctx, self.message, self.time))
+        return abs(hash((self.ctx, self.message, self.time)))  # Is this ok?
+        # Is more legible but might not always be unique...
 
     def timeRemaining(self):
         return self.time - datetime.now()

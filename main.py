@@ -119,6 +119,7 @@ async def rules(ctx, year):
 @bot.command(name='create', help='Creates a future event with a specific message.')
 async def create(ctx, message, time):
     await events.addEvent(ctx, message, time)
+    await ctx.send(f"Event created.")
 
 
 @bot.command(name='delete', help='Deletes an event. Ex: !delete 2. Use !list to get event numbers.')
@@ -134,7 +135,7 @@ async def delete(ctx, eventKey):
 
 @bot.command(name='list', help='Lists all upcoming events with message and time')
 async def listEvents(ctx):
-    listEmbed = discord.Embed(title='Upcoming events:', description=events.listEvents(), color=0x00aff4)#change color bacl
+    listEmbed = discord.Embed(title='__**Upcoming events:**__', description=f"```prolog\n{events.listEvents()}\n```", color=0x00aff4)#change color bacl
     await ctx.send(embed=listEmbed)
 
 
