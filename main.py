@@ -24,8 +24,12 @@ if __name__ == "__main__":
 async def on_ready():
     print('Program connected')
 
+
 @bot.event
 async def on_command_error(ctx, error):
+    """
+    When an error/exception occurs, send some info to discord.
+    """
     if isinstance(error, commands.CommandNotFound):
         await ctx.reply('That command is not recognized, please try again.')
     else:
@@ -33,7 +37,10 @@ async def on_command_error(ctx, error):
 
 
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
-async def test2(ctx):
+async def test(ctx):
+    """
+    Responds to a test command to indicate if the bot is online and responding.
+    """
     await ctx.reply('test success!')
 
 
@@ -102,7 +109,7 @@ async def rules(ctx, year: int):
 
 
 @bot.command(name='create', help='Creates a future event with a specific message.')
-async def create(ctx, message: str, time: datetime):
+async def create(ctx, message, time):
     """
     Creates a new Event with a specified message and time.
     """
@@ -111,7 +118,7 @@ async def create(ctx, message: str, time: datetime):
 
 
 @bot.command(name='delete', help='Deletes an event. Ex: !delete 2. Use !list to get event numbers.')
-async def delete(ctx, eventKey: int):
+async def delete(ctx, eventKey):
     """
     Deletes an Event by it's hash ID.
     """
