@@ -51,7 +51,9 @@ async def checkin(ctx):
         if len(person_list.occupants) >= max_occupancy:
             print("too many people")
             await notifyPeople(ctx)
-            await ctx.reply("Warning: There are already " + str(len(person_list.occupants)) + " people in the space! There can only be " + str(max_occupancy) + " people at a time!")
+            await ctx.reply("Warning: There are already " + str(
+                len(person_list.occupants)) + " people in the space! There can only be " + str(
+                max_occupancy) + " people at a time!")
             person_list.write_to_log(ctx, True, True)
         else:
             person_list.write_to_log(ctx, True, False)
@@ -67,6 +69,7 @@ async def checkin(ctx):
         await ctx.reply('You are all checked out! Thanks for visiting the DBF space!')
     else:
         await ctx.reply("You aren't checked in!")
+
 
 @bot.command(name='getlog', help='Returns a text file with checkins and checkouts')
 async def getspacelogs(ctx):
