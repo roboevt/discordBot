@@ -1,5 +1,3 @@
-# bot.py
-import asyncio
 import os
 import discord
 from datetime import datetime
@@ -7,19 +5,16 @@ from datetime import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from Event import Event
 from Rules import Rules
 from EventManager import EventManager
 from SpaceManager import SpaceManager
 from Movement import Movement
 
 if __name__ == "__main__":
-    print('in setup')
     load_dotenv()
     TOKEN = os.getenv('DISCORD_TOKEN')
     embedDefaultColor = os.getenv('embedDefaultColor')
     bot = commands.Bot(command_prefix=os.getenv('command_prefix'))
-    print(os.getenv('command_prefix'))
     events = EventManager()
     person_list = SpaceManager()
     max_occupancy = os.getenv('max_occupancy')
@@ -27,22 +22,8 @@ if __name__ == "__main__":
 
 @bot.event
 async def on_ready():
-    print('Program started')
-    #for eventToSend in events.eventsList:
-    #    await delayedSend(eventToSend)
+    print('Program connected')
 
-
-"""@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send('That command is not recognized, please try again.')
-    if isinstance(error, commands.BadArgument) \
-            or isinstance(error, commands.MissingRequiredArgument) \
-            or isinstance(error, commands.ArgumentParsingError) \
-            or isinstance(error, commands.TooManyArguments) \
-            or isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send('There was an issue with the parameters of that command. Check !help for more information')
-"""
 
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
 async def test2(ctx):
@@ -119,7 +100,7 @@ async def rules(ctx, year):
 @bot.command(name='create', help='Creates a future event with a specific message.')
 async def create(ctx, message, time):
     await events.addEvent(ctx, message, time)
-    await ctx.send(f"Event created.")
+    await ctx.reply(f"Event created.")
 
 
 @bot.command(name='delete', help='Deletes an event. Ex: !delete 2. Use !list to get event numbers.')
@@ -136,7 +117,7 @@ async def delete(ctx, eventKey):
 @bot.command(name='list', help='Lists all upcoming events with message and time')
 async def listEvents(ctx):
     listEmbed = discord.Embed(title='__**Upcoming events:**__', description=f"```prolog\n{events.listEvents()}\n```", color=0x00aff4)#change color bacl
-    await ctx.send(embed=listEmbed)
+    await ctx.reply(embed=listEmbed)
 
 
 @bot.command(name='clear', help='Clears all upcoming events')

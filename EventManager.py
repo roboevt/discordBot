@@ -1,23 +1,20 @@
-import os
 from datetime import datetime
 import dateparser
 from Event import Event
 import asyncio
-import pickle
-import os.path
-from os import path
 
 
-class EventManager:
+class EventManager(object):
     def __init__(self):
         self.dictionary = {}
 
     async def addEvent(self, ctx, message, time):
-        time = dateparser.parse(time)
+        time = dateparser.parse(time, settings={'TIMEZONE': 'America/Chicago'})
         eventAdded = Event(ctx, message, time)
         eventAdded.future = asyncio.create_task(self.delayedSend(eventAdded, ctx, message, time))
         print(f"hash: {hash(eventAdded)}")
         self.dictionary[hash(eventAdded)] = eventAdded
+        self.saveToFile()
 
     async def delayedSend(self, event, ctx, message, time):
         timeDeltaSend = time - datetime.now()
