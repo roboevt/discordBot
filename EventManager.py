@@ -1,5 +1,6 @@
 from datetime import datetime
 import dateparser
+import pytz
 from Event import Event
 import asyncio
 
@@ -16,7 +17,8 @@ class EventManager(object):
         self.dictionary[hash(eventAdded)] = eventAdded
 
     async def delayedSend(self, event: Event, ctx, message: str, time: datetime) -> None:
-        timeDeltaSend = time - datetime.now()
+        CST = pytz.timezone('America/Chicago')
+        timeDeltaSend = time - datetime.now(CST)
         print(f"sending followup in {timeDeltaSend.total_seconds()}")
         await asyncio.sleep(timeDeltaSend.total_seconds())
         print('sending followup')
@@ -27,7 +29,7 @@ class EventManager(object):
         event.future.cancel()
         del self.dictionary[hash(event)]
 
-    def listEvents(self) -> str:
+    def listEvents(self):
         eventString = ''
         if len(self.dictionary) == 0:
             eventString = 'None'
