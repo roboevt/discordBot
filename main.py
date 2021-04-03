@@ -25,16 +25,16 @@ async def on_ready():
     print('Program connected')
 
 
-@bot.event
+"""@bot.event
 async def on_command_error(ctx, error):
-    """
+    ""
     When an error/exception occurs, send some info to discord.
-    """
+    ""
     if isinstance(error, commands.CommandNotFound):
         await ctx.reply('That command is not recognized, please try again.')
     else:
         await ctx.reply('There was an issue with that command, please check it and try again.')
-
+"""
 
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
 async def test(ctx):
