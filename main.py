@@ -24,10 +24,17 @@ if __name__ == "__main__":
 async def on_ready():
     print('Program connected')
 
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.reply('That command is not recognized, please try again.')
+    else:
+        await ctx.reply('There was an issue with that command, please check it and try again.')
+
 
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
 async def test2(ctx):
-    await ctx.send('test success!')
+    await ctx.reply('test success!')
 
 
 @bot.command(name='checkin', help='Lets people check into the DBF space.')
@@ -82,29 +89,32 @@ async def getspacelogs(ctx):
 
 
 @bot.command(name='rules', help='sends the DBF rules for a particular year')
-async def rules(ctx, year):
-    if year.isdigit():
-        year = int(year)
-        if year in Rules.years:
-            rulesEmbed = discord.Embed(title=str(year) + ' rules:', color=embedDefaultColor)
-            rulesEmbed.description = '[**Click here**](' + Rules.years[year] + ')'
-            await ctx.send(embed=rulesEmbed)
-            print('Sent rules for year ' + year)
-            # await ctx.send('__**' + str(year) + ' rules:**__\n' + Rules.years[year])
-        else:
-            await ctx.send('We do not have the year ' + str(year) + ' in our database, please try another year.')
-    else:
-        await ctx.send('Please input the year as an integer, for example, "rules 2016"')
+async def rules(ctx, year: int):
+    """
+    Returns a github link to the DBF rules of the specified year from an accompanying dictionary in Rules.
+    """
+    try:
+        rulesEmbed = discord.Embed(title=str(year) + ' rules:', color=0x00aff4)  # Why doesn't this work from .env?
+        rulesEmbed.description = '[**Click here**](' + Rules.years[year] + ')'
+        await ctx.reply(embed=rulesEmbed)
+    except KeyError:
+        await ctx.reply(f"We do not have rules for the year {year} in our database")
 
 
 @bot.command(name='create', help='Creates a future event with a specific message.')
-async def create(ctx, message, time):
+async def create(ctx, message: str, time: datetime):
+    """
+    Creates a new Event with a specified message and time.
+    """
     await events.addEvent(ctx, message, time)
     await ctx.reply(f"Event created.")
 
 
 @bot.command(name='delete', help='Deletes an event. Ex: !delete 2. Use !list to get event numbers.')
-async def delete(ctx, eventKey):
+async def delete(ctx, eventKey: int):
+    """
+    Deletes an Event by it's hash ID.
+    """
     try:
         events.deleteEvent(eventKey)
         await ctx.send('Event deleted.')
@@ -116,12 +126,19 @@ async def delete(ctx, eventKey):
 
 @bot.command(name='list', help='Lists all upcoming events with message and time')
 async def listEvents(ctx):
-    listEmbed = discord.Embed(title='__**Upcoming events:**__', description=f"```prolog\n{events.listEvents()}\n```", color=0x00aff4)#change color bacl
+    """
+    Creates a Discord embed with a list of all upcoming events. Formatted as a code block to add text color.
+    """
+    listEmbed = discord.Embed(title='__**Upcoming events:**__', description=f"```prolog\n{events.listEvents()}\n```",
+                              color=0x00aff4)  # change color bacl
     await ctx.reply(embed=listEmbed)
 
 
 @bot.command(name='clear', help='Clears all upcoming events')
 async def clear(ctx):
+    """
+    Clears(deletes) all upcoming events.
+    """
     amount = events.numEvents()
     events.clearEvents()
     await ctx.send(str(amount) + ' event(s) cleared. There are now 0 upcoming events.')
