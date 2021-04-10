@@ -21,13 +21,20 @@ if __name__ == "__main__":
 
 @bot.event
 async def on_ready():
+    """
+    Code to run when the bot first connects to Discord
+    :return: None
+    """
     print('Program connected')
 
 
 @bot.event
 async def on_command_error(ctx, error):
     """
-    When an error/exception occurs, send some info to discord.
+    When an incorrect command is sent or an exception is raised in a command, send an error message.
+    :param ctx: context of the message
+    :param error: the error
+    :return: None
     """
     if isinstance(error, commands.CommandNotFound):
         await ctx.reply('That command is not recognized, please try again.')
@@ -38,7 +45,9 @@ async def on_command_error(ctx, error):
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
 async def test(ctx):
     """
-    Responds to a test command to indicate if the bot is online and responding.
+    Responds to the test command with "test success!"
+    :param ctx: context of the message
+    :return: None
     """
     await ctx.reply('test success!')
 
@@ -79,7 +88,10 @@ async def getspacelogs(ctx):
 @bot.command(name='rules', help='sends the DBF rules for a particular year')
 async def rules(ctx, year: int):
     """
-    Returns a github link to the DBF rules of the specified year from an accompanying dictionary in Rules.
+    Replies with the rules for the specified year
+    :param ctx: context of the message
+    :param year: year for rules
+    :return: None
     """
     try:
         rulesEmbed = discord.Embed(title=str(year) + ' rules:', color=0x00aff4)  # Why doesn't this work from .env?
@@ -92,7 +104,11 @@ async def rules(ctx, year: int):
 @bot.command(name='create', help='Creates a future event with a specific message.')
 async def create(ctx, message, time):
     """
-    Creates a new Event with a specified message and time.
+    Creates a new event
+    :param ctx: context of the message
+    :param message: What message to send
+    :param time: What time to send the message
+    :return: None
     """
     await events.addEvent(ctx, message, time)
     await ctx.reply(f"Event created.")
@@ -101,7 +117,10 @@ async def create(ctx, message, time):
 @bot.command(name='delete', help='Deletes an event. Ex: !delete 2. Use !list to get event numbers.')
 async def delete(ctx, eventKey):
     """
-    Deletes an Event by it's hash ID.
+    Deletes an Event
+    :param ctx: context of the message
+    :param eventKey: The hash of the Event to be deleted
+    :return: None
     """
     try:
         events.deleteEvent(eventKey)
@@ -115,7 +134,9 @@ async def delete(ctx, eventKey):
 @bot.command(name='list', help='Lists all upcoming events with message and time')
 async def listEvents(ctx):
     """
-    Creates a Discord embed with a list of all upcoming events. Formatted as a code block to add text color.
+    Creates and sends a discord Embed listing out Events by their hash
+    :param ctx: context of the message
+    :return: None
     """
     listEmbed = discord.Embed(title='__**Upcoming events:**__', description=f"```prolog\n{events.listEvents()}\n```",
                               color=0x00aff4)  # change color bacl
@@ -125,7 +146,9 @@ async def listEvents(ctx):
 @bot.command(name='clear', help='Clears all upcoming events')
 async def clear(ctx):
     """
-    Clears(deletes) all upcoming events.
+    Deletes all upcoming Events
+    :param ctx: context of the message
+    :return: None
     """
     amount = events.numEvents()
     events.clearEvents()
