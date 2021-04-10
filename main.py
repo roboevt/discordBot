@@ -81,8 +81,15 @@ async def checkin(ctx):
 
 
 @bot.command(name='getlog', help='Returns a text file with checkins and checkouts')
-async def getspacelogs(ctx):
+async def getlog(ctx):
     await person_list.return_file(ctx)
+
+
+@bot.command(name='resetlog', help='Resets the log of checkins and checkouts')
+async def resetlog(ctx):
+    global person_list
+    person_list = SpaceManager()
+    await ctx.reply("The log has been reset")
 
 
 @bot.command(name='rules', help='sends the DBF rules for a particular year')
