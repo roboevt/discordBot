@@ -25,11 +25,23 @@ class EventManager(object):
         :return:
         :rtype: None
         """
-        time = dateparser.parse(time, settings={'TIMEZONE': 'America/Chicago'})
-        time = self.timezone.localize(time)
-        eventAdded = Event(ctx, message, time)
-        eventAdded.future = asyncio.create_task(self.delayedSend(eventAdded))
-        self.dictionary[hash(eventAdded)] = eventAdded
+        try:
+            time = dateparser.parse(time, settings={'TIMEZONE': 'America/Chicago'})
+        except ValueError:
+            await ctx.reply('That date was not in a recognized format.')
+            return
+        try:
+            time = self.timezone.localize(time)
+        except ValueError:
+            print('timezone.localize raised ValueError')
+            pass
+        if datetime.now(self.timezone) < time:  # If the event is in the future
+            eventAdded = Event(ctx, message, time)
+            eventAdded.future = asyncio.create_task(self.delayedSend(eventAdded))
+            self.dictionary[hash(eventAdded)] = eventAdded
+            await ctx.reply(f"Event created.")
+        else:
+            await ctx.reply('Please enter a time in the future.')
 
     async def delayedSend(self, event: Event) -> None:
         """
