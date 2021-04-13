@@ -11,9 +11,11 @@ class EventManager(object):
     def __init__(self):
         self.dictionary = {}
         load_dotenv()
-        self.timezone = pytz.timezone(os.getenv('timezone'))
+        self.timezone = pytz.timezone(os.getenv('sendTimezone'))
+        self.settings = {'TIMEZONE': os.getenv('sendTimezone'), 'TO_TIMEZONE': os.getenv('storeTimezone'),
+                         'RETURN_AS_TIMEZONE_AWARE': True}
 
-    async def addEvent(self, ctx, message: str, time: datetime) -> None:
+    async def addEvent(self, ctx, message: str, time: str) -> None:
         """
         Adds a new event to the dictionary, with accurate time
         :param ctx: ctx the message should be sent to
@@ -26,17 +28,15 @@ class EventManager(object):
         :rtype: None
         """
         try:
-            time = dateparser.parse(time, settings={'TIMEZONE': 'America/Chicago'})
+            timeToSend = dateparser.parse(time, settings=self.settings)
         except ValueError:
             await ctx.reply('That date was not in a recognized format.')
             return
-        try:
-            time = self.timezone.localize(time)
-        except ValueError:
-            print('timezone.localize raised ValueError')
-            pass
-        if datetime.now(self.timezone) < time:  # If the event is in the future
-            eventAdded = Event(ctx, message, time)
+        if type(timeToSend) is None:  # Why doesn't this work?
+            await ctx.reply('That date was not in a recognized format.')
+            return
+        if datetime.now(pytz.timezone('UTC')) < timeToSend:  # If the event is in the future
+            eventAdded = Event(ctx, message, timeToSend)
             eventAdded.future = asyncio.create_task(self.delayedSend(eventAdded))
             self.dictionary[hash(eventAdded)] = eventAdded
             await ctx.reply(f"Event created.")
@@ -49,7 +49,7 @@ class EventManager(object):
         :param event: The event to send
         :return: A future
         """
-        timeDeltaSend = event.time - datetime.now(self.timezone)
+        timeDeltaSend = event.time - datetime.now(pytz.timezone('UTC'))
         await asyncio.sleep(timeDeltaSend.total_seconds())
         await event.ctx.send(event.message)
         self.removeEvent(event)
@@ -72,8 +72,9 @@ class EventManager(object):
         if len(self.dictionary) == 0:
             eventString = 'None'
         for event in self.dictionary.items():
-            eventString += f"\nID: {hash(event[1])} \t Date: {event[1].time.strftime('%m/%d/%Y %H:%M')}" \
-                           f"\nMessage: '{event[1].message}'\n"
+            eventString += f"\nID: {hash(event[1])} \t " \
+                           f"Date: {event[1].time.astimezone(self.timezone).strftime('%m/%d/%Y %H:%M')} \n" \
+                           f"Message: '{event[1].message}'\n"
         return eventString
 
     def deleteEvent(self, eventKey: int) -> None:

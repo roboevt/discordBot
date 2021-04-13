@@ -28,18 +28,18 @@ async def on_ready():
     print('Program connected')
 
 
-#@bot.event
-#async def on_command_error(ctx, error):
- #   """
-  #  When an incorrect command is sent or an exception is raised in a command, send an error message.
-   # :param ctx: context of the message
-    #:param error: the error
-#    :return: None
- #   """
-  #  if isinstance(error, commands.CommandNotFound):
-   #     await ctx.reply('That command is not recognized, please try again.')
-#    else:
- #       await ctx.reply('There was an issue with that command, please check it and try again.')
+@bot.event
+async def on_command_error(ctx, error):
+    """
+    When an incorrect command is sent or an exception is raised in a command, send an error message.
+    :param ctx: context of the message
+    :param error: the error
+    :return: None
+    """
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.reply('That command is not recognized, please try again.')
+    else:
+        await ctx.reply('There was an issue with that command, please check it and try again.')
 
 
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
