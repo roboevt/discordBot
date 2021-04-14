@@ -14,6 +14,7 @@ class Event(object):
         self.ctx = ctx
         self.message = message
         self.time = time
+        self.future = None
 
     def __eq__(self, other):
         """
@@ -28,5 +29,4 @@ class Event(object):
         Hashes this event
         :return: int
         """
-        return abs(hash((self.ctx, self.message, self.time)))  # Is this ok?
-        # Is more legible but might not always be unique...
+        return abs(hash((self.ctx, self.message, self.time)))

@@ -14,7 +14,7 @@ class SpaceManager:
         self.ppltonotify = []
         self.readFromFile()
         load_dotenv()
-        self.timezone = os.getenv("timezone")
+        self.timezone = os.getenv("deployTimezone")
         with open("DBF Space Log.txt", "w") as doc:
             doc.write("This Log of the Design Build Fly Space was created at ")
             current_date_time = str(datetime.now(pytz.timezone(self.timezone)))

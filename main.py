@@ -9,10 +9,10 @@ from Rules import Rules
 from EventManager import EventManager
 from SpaceManager import SpaceManager
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # These are used in the functions, must be declared at beginning.
     load_dotenv()
     TOKEN = os.getenv('DISCORD_TOKEN')
-    embedDefaultColor = os.getenv('embedDefaultColor')
+    embedDefaultColor = int(os.getenv('embedDefaultColor'), 16)
     bot = commands.Bot(command_prefix=os.getenv('command_prefix'))
     events = EventManager()
     person_list = SpaceManager()
@@ -28,19 +28,19 @@ async def on_ready():
     print('Program connected')
 
 
-@bot.event
+"""@bot.event
 async def on_command_error(ctx, error):
-    """
+    ""
     When an incorrect command is sent or an exception is raised in a command, send an error message.
     :param ctx: context of the message
     :param error: the error
     :return: None
-    """
+    ""
     if isinstance(error, commands.CommandNotFound):
         await ctx.reply('That command is not recognized, please try again.')
     else:
         await ctx.reply('There was an issue with that command, please check it and try again.')
-
+"""
 
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
 async def test(ctx):
@@ -101,7 +101,7 @@ async def rules(ctx, year: int):
     :return: None
     """
     try:
-        rulesEmbed = discord.Embed(title=str(year) + ' rules:', color=0x00aff4)  # Why doesn't this work from .env?
+        rulesEmbed = discord.Embed(title=str(year) + ' rules:', color=embedDefaultColor)
         rulesEmbed.description = '[**Click here**](' + Rules.years[year] + ')'
         await ctx.reply(embed=rulesEmbed)
     except KeyError:
@@ -129,7 +129,7 @@ async def delete(ctx, eventKey):
     :return: None
     """
     try:
-        events.deleteEvent(eventKey)
+        events.deleteEvent(int(eventKey))
         await ctx.send('Event deleted.')
     except KeyError:
         await ctx.send('That event was not found.')
@@ -145,7 +145,7 @@ async def listEvents(ctx):
     :return: None
     """
     listEmbed = discord.Embed(title='__**Upcoming events:**__', description=f"```prolog\n{events.listEvents()}\n```",
-                              color=0x00aff4)  # change color bacl
+                              color=embedDefaultColor)
     await ctx.reply(embed=listEmbed)
 
 
@@ -168,5 +168,5 @@ async def notifyPeople(ctx):
         await member.send("The space is over capacity!")
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # This must run after the functions are declared
     bot.run(TOKEN)

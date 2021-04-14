@@ -11,8 +11,11 @@ class EventManager(object):
     def __init__(self):
         self.dictionary = {}
         load_dotenv()
-        self.timezone = pytz.timezone(os.getenv('sendTimezone'))
-        self.settings = {'TIMEZONE': os.getenv('sendTimezone'), 'TO_TIMEZONE': os.getenv('storeTimezone'),
+        self.deployTimezoneStr=os.getenv('deployTimezone')
+        self.serverTimezoneStr = os.getenv('serverTimezone')
+        self.deployTimezone = pytz.timezone(self.deployTimezoneStr)
+        self.serverTimezone = pytz.timezone(self.serverTimezoneStr)
+        self.settings = {'TIMEZONE': self.deployTimezoneStr, 'TO_TIMEZONE': self.serverTimezoneStr,
                          'RETURN_AS_TIMEZONE_AWARE': True}
 
     async def addEvent(self, ctx, message: str, time: str) -> None:
@@ -32,25 +35,25 @@ class EventManager(object):
         except ValueError:
             await ctx.reply('That date was not in a recognized format.')
             return
-        if type(timeToSend) is None:  # Why doesn't this work?
+        if timeToSend is None:
             await ctx.reply('That date was not in a recognized format.')
             return
-        if datetime.now(pytz.timezone('UTC')) < timeToSend:  # If the event is in the future
+        if datetime.now(self.serverTimezone) < timeToSend:  # If the event is in the future
             eventAdded = Event(ctx, message, timeToSend)
-            eventAdded.future = asyncio.create_task(self.delayedSend(eventAdded))
+            timeDeltaSend = eventAdded.time - datetime.now(self.serverTimezone)
+            eventAdded.future = asyncio.create_task(
+                makeCallback(timeDeltaSend.total_seconds(), self.sendEvent(eventAdded)))
             self.dictionary[hash(eventAdded)] = eventAdded
-            await ctx.reply(f"Event created.")
+            await ctx.reply(f"Event created. ID:{hash(eventAdded)}")
         else:
             await ctx.reply('Please enter a time in the future.')
 
-    async def delayedSend(self, event: Event) -> None:
+    async def sendEvent(self, event: Event):
         """
-        A callback function to send an event at it's time, after a delay
+        Sends the specified event
         :param event: The event to send
-        :return: A future
+        :return: None
         """
-        timeDeltaSend = event.time - datetime.now(pytz.timezone('UTC'))
-        await asyncio.sleep(timeDeltaSend.total_seconds())
         await event.ctx.send(event.message)
         self.removeEvent(event)
 
@@ -61,7 +64,10 @@ class EventManager(object):
         :return: None
         """
         event.future.cancel()
-        del self.dictionary[hash(event)]
+        try:
+            del self.dictionary[hash(event)]
+        except KeyError:  # if that event is not in the dictionary
+            pass  # it was deleted before the message was sent
 
     def listEvents(self) -> str:
         """
@@ -72,19 +78,18 @@ class EventManager(object):
         if len(self.dictionary) == 0:
             eventString = 'None'
         for event in self.dictionary.items():
-            eventString += f"\nID: {hash(event[1])} \t " \
-                           f"Date: {event[1].time.astimezone(self.timezone).strftime('%m/%d/%Y %H:%M')} \n" \
+            eventString += f"\nID: {hash(event[1])} \t "\
+                           f"Date: {event[1].time.astimezone(self.deployTimezone).strftime('%m/%d/%Y %H:%M')} \n"\
                            f"Message: '{event[1].message}'\n"
         return eventString
 
-    def deleteEvent(self, eventKey: int) -> None:
+    def removeEventByKey(self, eventKey: int) -> None:
         """
         Removes an event based on it's hash
         :param eventKey: The integer hash of the event to be deleted
         :return: None
         """
-        print(self.dictionary)
-        self.removeEvent(self.dictionary[int(eventKey)])
+        self.removeEvent(self.dictionary[eventKey])
 
     def numEvents(self) -> int:
         """
@@ -99,3 +104,8 @@ class EventManager(object):
         :return: None
         """
         self.dictionary.clear()
+
+
+async def makeCallback(time, callbackFunction):
+    await asyncio.sleep(time)
+    await callbackFunction
