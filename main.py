@@ -63,18 +63,18 @@ async def checkin(ctx):
             await ctx.reply("Warning: There are already " + str(
                 len(person_list.occupants)) + " people in the space! There can only be " + str(
                 max_occupancy) + " people at a time!")
-            person_list.write_to_log(ctx, True, True)
+            await person_list.write_to_log(ctx, True, True)
         else:
-            person_list.write_to_log(ctx, True, False)
-        person_list.occupants.append(ctx.message.author.display_name)
+            await person_list.write_to_log(ctx, True, False)
+        await person_list.occupants.append(ctx.message.author.display_name)
         await ctx.reply('You are all checked in! Welcome to the DBF space!')
 
 
 @bot.command(name='checkout', help='Lets people check out the DBF space.')
 async def checkin(ctx):
     if ctx.message.author.display_name in person_list.occupants:
-        person_list.occupants.remove(ctx.message.author.display_name)
-        person_list.write_to_log(ctx, False, False)
+        await person_list.occupants.remove(ctx.message.author.display_name)
+        await person_list.write_to_log(ctx, False, False)
         await ctx.reply('You are all checked out! Thanks for visiting the DBF space!')
     else:
         await ctx.reply("You aren't checked in!")
