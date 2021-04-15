@@ -26,9 +26,6 @@ async def on_ready():
     :return: None
     """
     print('Program connected')
-    for emoji in bot.emojis:
-        print(1)
-        print("Name:", emoji.name + ",", "ID:", emoji.id)
 
 
 @bot.event
