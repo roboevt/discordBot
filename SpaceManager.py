@@ -15,19 +15,17 @@ class SpaceManager:
         self.readFromFile()
         load_dotenv()
         self.timezone = os.getenv("discordTimezone")
-        with open("DBF Space Log.txt", "w") as doc:
-            doc.write("This Log of the Design Build Fly Space was created at ")
-            current_date_time = str(datetime.now(pytz.timezone(self.timezone)))
-            doc.write(f"{current_date_time}\n")
+        self.file_name = ''
+        self.reset()
 
     async def return_file(self, ctx):
-        with await open('DBF Space Log.txt', 'r') as fp:
+        with open(self.file_name, 'r') as fp:
             current_date_time = str(datetime.now(pytz.timezone(self.timezone)))
             current_date_time = f'{current_date_time[0:13]}.{current_date_time[14:16]}.{current_date_time[17:19]}'
             await ctx.reply(file=discord.File(fp, f'DBF Space Log {current_date_time}.txt'))
 
-    async def write_to_log(self, ctx, is_checking_in, is_over_capacity):
-        with await open("DBF Space Log.txt", "a") as doc:
+    def write_to_log(self, ctx, is_checking_in, is_over_capacity):
+        with open(self.file_name, "a") as doc:
             checkin_or_out = ''
             over_capacity = ''
             if is_checking_in:
@@ -38,7 +36,16 @@ class SpaceManager:
                 over_capacity = "The Space is over capacity!"
             to_write = f"{ctx.message.author.display_name} {checkin_or_out} "
             to_write += f"{datetime.now(pytz.timezone(self.timezone))}. {over_capacity}\n"
-            await doc.write(to_write)
+            doc.write(to_write)
+
+    def reset(self):
+        current_date_time = str(datetime.now(pytz.timezone(self.timezone)))
+        current_date_time = f'{current_date_time[0:13]}.{current_date_time[14:16]}.{current_date_time[17:19]}'
+        self.file_name = f"DBF Space Log {current_date_time}.txt"
+        with open(self.file_name, "w") as doc:
+            doc.write("This Log of the Design Build Fly Space was created at ")
+            current_date_time = str(datetime.now(pytz.timezone(self.timezone)))
+            doc.write(f"{current_date_time}\n")
 
     def readFromFile(self):
         peopleString = ""
@@ -48,4 +55,4 @@ class SpaceManager:
                     peopleString = people.read()
                 self.ppltonotify = peopleString.split('\n')
         return
-    #Since this only runs at the very beginning and init runs it, I am not making this async
+    # Since this only runs at the very beginning and init runs it, I am not making this async
