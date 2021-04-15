@@ -15,7 +15,7 @@ class EventManager(object):
         self.serverTimezoneStr = os.getenv('serverTimezone')
         self.discordTimezone = pytz.timezone(self.discordTimezoneStr)
         self.serverTimezone = pytz.timezone(self.serverTimezoneStr)
-        self.settings = {'TIMEZONE': self.deployTimezoneStr, 'TO_TIMEZONE': self.serverTimezoneStr,
+        self.settings = {'TIMEZONE': self.discordTimezoneStr, 'TO_TIMEZONE': self.serverTimezoneStr,
                          'RETURN_AS_TIMEZONE_AWARE': True}
 
     async def addEvent(self, ctx, message: str, time: str) -> None:
