@@ -26,21 +26,24 @@ async def on_ready():
     :return: None
     """
     print('Program connected')
+    for emoji in bot.emojis:
+        print(1)
+        print("Name:", emoji.name + ",", "ID:", emoji.id)
 
 
-"""@bot.event
+@bot.event
 async def on_command_error(ctx, error):
-    ""
+    """
     When an incorrect command is sent or an exception is raised in a command, send an error message.
     :param ctx: context of the message
     :param error: the error
     :return: None
-    ""
+    """
     if isinstance(error, commands.CommandNotFound):
         await ctx.reply('That command is not recognized, please try again.')
     else:
         await ctx.reply('There was an issue with that command, please check it and try again.')
-"""
+
 
 @bot.command(name='test', help='responds with "test success!" if the bot is running correctly.')
 async def test(ctx):
@@ -67,6 +70,7 @@ async def checkin(ctx):
         else:
             await person_list.write_to_log(ctx, True, False)
         await person_list.occupants.append(ctx.message.author.display_name)
+
         await ctx.reply('You are all checked in! Welcome to the DBF space!')
 
 
