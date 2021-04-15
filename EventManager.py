@@ -11,9 +11,9 @@ class EventManager(object):
     def __init__(self):
         self.dictionary = {}
         load_dotenv()
-        self.deployTimezoneStr=os.getenv('deployTimezone')
+        self.discordTimezoneStr = os.getenv('discordTimezone')
         self.serverTimezoneStr = os.getenv('serverTimezone')
-        self.deployTimezone = pytz.timezone(self.deployTimezoneStr)
+        self.discordTimezone = pytz.timezone(self.discordTimezoneStr)
         self.serverTimezone = pytz.timezone(self.serverTimezoneStr)
         self.settings = {'TIMEZONE': self.deployTimezoneStr, 'TO_TIMEZONE': self.serverTimezoneStr,
                          'RETURN_AS_TIMEZONE_AWARE': True}
@@ -72,14 +72,14 @@ class EventManager(object):
     def listEvents(self) -> str:
         """
         Creates a list of all upcoming events
-        :return: An str with each event's details listed.
+        :return: A string with each event's details listed.
         """
         eventString = ''
         if len(self.dictionary) == 0:
             eventString = 'None'
         for event in self.dictionary.items():
-            eventString += f"\nID: {hash(event[1])} \t "\
-                           f"Date: {event[1].time.astimezone(self.deployTimezone).strftime('%m/%d/%Y %H:%M')} \n"\
+            eventString += f"\nID: {hash(event[1])} \t " \
+                           f"Date: {event[1].time.astimezone(self.discordTimezone).strftime('%m/%d/%Y %H:%M')} \n" \
                            f"Message: '{event[1].message}'\n"
         return eventString
 
@@ -106,6 +106,6 @@ class EventManager(object):
         self.dictionary.clear()
 
 
-async def makeCallback(time, callbackFunction):
+async def makeCallback(time: int, callbackFunction):
     await asyncio.sleep(time)
     await callbackFunction

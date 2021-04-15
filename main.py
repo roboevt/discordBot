@@ -93,7 +93,7 @@ async def resetlog(ctx):
 
 
 @bot.command(name='rules', help='sends the DBF rules for a particular year')
-async def rules(ctx, year: int):
+async def rules(ctx, year: str):
     """
     Replies with the rules for the specified year
     :param ctx: context of the message
@@ -101,15 +101,15 @@ async def rules(ctx, year: int):
     :return: None
     """
     try:
-        rulesEmbed = discord.Embed(title=str(year) + ' rules:', color=embedDefaultColor)
-        rulesEmbed.description = '[**Click here**](' + Rules.years[year] + ')'
+        rulesEmbed = discord.Embed(title=f"{year} rules", color=embedDefaultColor)
+        rulesEmbed.description = f"[**Click here**]({Rules.years[year]})"
         await ctx.reply(embed=rulesEmbed)
     except KeyError:
         await ctx.reply(f"We do not have rules for the year {year} in our database")
 
 
 @bot.command(name='create', help='Creates a future event with a specific message.')
-async def create(ctx, message, time):
+async def create(ctx, message: str, time: str):
     """
     Creates a new event
     :param ctx: context of the message
@@ -121,7 +121,7 @@ async def create(ctx, message, time):
 
 
 @bot.command(name='delete', help='Deletes an event. Ex: !delete 2. Use !list to get event numbers.')
-async def delete(ctx, eventKey):
+async def delete(ctx, eventKey: str):
     """
     Deletes an Event
     :param ctx: context of the message
