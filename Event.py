@@ -1,10 +1,11 @@
 import asyncio
 from datetime import datetime, timedelta
+import pytz
 
 
 class Event(object):
 
-    def __init__(self, ctx, message: str, time: datetime):
+    def __init__(self, ctx, message: str, time: datetime, timezone: pytz):
         """
         Initializes a new Event
         :param ctx: context of the message (which server/channel to send response to)
@@ -14,6 +15,7 @@ class Event(object):
         self.ctx = ctx
         self.message = message
         self.time = time
+        self.timezone = timezone
         self.future = None
 
     def __eq__(self, other):
@@ -30,3 +32,6 @@ class Event(object):
         :return: int
         """
         return abs(hash((self.ctx, self.message, self.time)))
+
+    def secondsRemaining(self):
+        return self.time - datetime.now(self.timezone)

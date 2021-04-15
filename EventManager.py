@@ -39,8 +39,8 @@ class EventManager(object):
             await ctx.reply('That date was not in a recognized format.')
             return
         if datetime.now(self.serverTimezone) < timeToSend:  # If the event is in the future
-            eventAdded = Event(ctx, message, timeToSend)
-            timeDeltaSend = eventAdded.time - datetime.now(self.serverTimezone)
+            eventAdded = Event(ctx, message, timeToSend, self.serverTimezone)
+            timeDeltaSend = eventAdded.secondsRemaining()
             eventAdded.future = asyncio.create_task(
                 makeCallback(timeDeltaSend.total_seconds(), self.sendEvent(eventAdded)))
             self.dictionary[hash(eventAdded)] = eventAdded
