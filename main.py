@@ -103,14 +103,14 @@ async def rules(ctx, year: str):
     """
     try:
         rulesEmbed = discord.Embed(title=f"{year} rules", color=embedDefaultColor)
-        rulesEmbed.description = f"[**Click here**]({Rules.years[year]})"
+        rulesEmbed.description = f"[**Click here**]({Rules.years[int(year)]})"
         await ctx.reply(embed=rulesEmbed)
     except KeyError:
         await ctx.reply(f"We do not have rules for the year {year} in our database")
 
 
-@bot.command(name='create', help='Creates a future event with a specific message.')
-async def create(ctx, message: str, time: str):
+@bot.command(name='remindme', help='Creates a future event with a specific message.')
+async def remindme(ctx, message: str, time: str):
     """
     Creates a new event
     :param ctx: context of the message
@@ -130,7 +130,7 @@ async def delete(ctx, eventKey: str):
     :return: None
     """
     try:
-        events.deleteEvent(int(eventKey))
+        events.removeEventByKey(int(eventKey))
         await ctx.send('Event deleted.')
     except KeyError:
         await ctx.send('That event was not found.')
@@ -159,7 +159,7 @@ async def clear(ctx):
     """
     amount = events.numEvents()
     events.clearEvents()
-    await ctx.send(str(amount) + ' event(s) cleared. There are now 0 upcoming events.')
+    await ctx.send(str(amount) + ' event(s) cleared. There are now no upcoming events.')
 
 
 async def notifyPeople(ctx):

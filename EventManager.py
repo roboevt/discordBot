@@ -103,6 +103,8 @@ class EventManager(object):
         Deletes all events
         :return: None
         """
+        for event in self.dictionary.items():
+            event[1].future.cancel()
         self.dictionary.clear()
 
 
