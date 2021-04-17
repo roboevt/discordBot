@@ -6,26 +6,24 @@ import os
 from datetime import datetime
 import pytz
 from dotenv import load_dotenv
+import aiofiles
 
 
 class SpaceManager:
     def __init__(self) -> object:
         self.occupants = []
         self.ppltonotify = []
-        self.readFromFile()
         load_dotenv()
         self.timezone = os.getenv("discordTimezone")
         self.file_name = ''
-        self.reset()
 
     async def return_file(self, ctx):
-        with open(self.file_name, 'r') as fp:
-            current_date_time = str(datetime.now(pytz.timezone(self.timezone)))
-            current_date_time = f'{current_date_time[0:13]}.{current_date_time[14:16]}.{current_date_time[17:19]}'
-            await ctx.reply(file=discord.File(fp, f'DBF Space Log {current_date_time}.txt'))
+        current_date_time = str(datetime.now(pytz.timezone(self.timezone)))
+        current_date_time = f'{current_date_time[0:13]}.{current_date_time[14:16]}.{current_date_time[17:19]}'
+        await ctx.reply(file=discord.File(self.file_name, f'DBF Space Log {current_date_time}.txt'))
 
-    def write_to_log(self, ctx, is_checking_in, is_over_capacity):
-        with open(self.file_name, "a") as doc:
+    async def write_to_log(self, ctx, is_checking_in, is_over_capacity):
+        async with aiofiles.open(self.file_name, "a") as doc:
             checkin_or_out = ''
             over_capacity = ''
             if is_checking_in:
@@ -36,23 +34,23 @@ class SpaceManager:
                 over_capacity = "The Space is over capacity!"
             to_write = f"{ctx.message.author.display_name} {checkin_or_out} "
             to_write += f"{datetime.now(pytz.timezone(self.timezone))}. {over_capacity}\n"
-            doc.write(to_write)
+            await doc.write(to_write)
 
-    def reset(self):
+    async def reset(self):
         current_date_time = str(datetime.now(pytz.timezone(self.timezone)))
         current_date_time = f'{current_date_time[0:13]}.{current_date_time[14:16]}.{current_date_time[17:19]}'
         self.file_name = f"DBF Space Log {current_date_time}.txt"
-        with open(self.file_name, "w") as doc:
-            doc.write("This Log of the Design Build Fly Space was created at ")
+        async with aiofiles.open(self.file_name, "w") as doc:
+            await doc.write("This Log of the Design Build Fly Space was created at ")
             current_date_time = str(datetime.now(pytz.timezone(self.timezone)))
-            doc.write(f"{current_date_time}\n")
+            await doc.write(f"{current_date_time}\n")
 
-    def readFromFile(self):
+    async def readFromFile(self):
         peopleString = ""
         if path.exists('ppltonotify.txt'):
             if os.stat('ppltonotify.txt').st_size != 0:
-                with open('ppltonotify.txt', 'r') as people:
-                    peopleString = people.read()
+                async with aiofiles.open('ppltonotify.txt', 'r') as people:
+                    peopleString = await people.read()
                 self.ppltonotify = peopleString.split('\n')
         return
     # Since this only runs at the very beginning and init runs it, I am not making this async

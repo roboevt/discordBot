@@ -26,6 +26,8 @@ async def on_ready():
     :return: None
     """
     print('Program connected')
+    await person_list.reset()
+    await person_list.readFromFile()
 
 
 @bot.event
@@ -63,9 +65,9 @@ async def checkin(ctx):
             await ctx.reply("Warning: There are already " + str(
                 len(person_list.occupants)) + " people in the space! There can only be " + str(
                 max_occupancy) + " people at a time!")
-            person_list.write_to_log(ctx, True, True)
+            await person_list.write_to_log(ctx, True, True)
         else:
-            person_list.write_to_log(ctx, True, False)
+            await person_list.write_to_log(ctx, True, False)
         person_list.occupants.append(ctx.message.author.display_name)
 
         await ctx.reply('You are all checked in! Welcome to the DBF space!')
@@ -75,7 +77,7 @@ async def checkin(ctx):
 async def checkout(ctx):
     if ctx.message.author.display_name in person_list.occupants:
         person_list.occupants.remove(ctx.message.author.display_name)
-        person_list.write_to_log(ctx, False, False)
+        await person_list.write_to_log(ctx, False, False)
         await ctx.reply('You are all checked out! Thanks for visiting the DBF space!')
     else:
         await ctx.reply("You aren't checked in!")
@@ -89,7 +91,7 @@ async def getlog(ctx):
 @bot.command(name='resetlog', help='Resets the log of checkins and checkouts')
 async def resetlog(ctx):
     global person_list
-    person_list.reset()
+    await person_list.reset()
     await ctx.reply("The log has been reset")
 
 
