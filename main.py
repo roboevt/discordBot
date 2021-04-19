@@ -1,9 +1,11 @@
 import os
 import discord
+import socket
 from datetime import datetime
 
 from discord.ext import commands
 from dotenv import load_dotenv
+from github import Github
 
 from Printer import Printer
 from PrinterManager import PrinterManager
@@ -19,7 +21,7 @@ if __name__ == "__main__":  # These are used in the functions, must be declared 
     events = EventManager()
     person_list = SpaceManager()
     printers = PrinterManager()
-    printers.addPrinter(Printer(name='Hanger Printer', model='Prusa MK3s', ip='172.27.11.78'))
+    printers.addPrinter(Printer(name='Hanger Printer', model='Prusa MK3s'))
     max_occupancy = int(os.getenv('max_occupancy'))
 
 
@@ -168,8 +170,8 @@ async def clear(ctx):
     await ctx.send(str(amount) + ' event(s) cleared. There are now no upcoming events.')
 
 
-@bot.command(name='ip')
-async def ip(ctx):
+@bot.command(name='printerip')
+async def printerip(ctx):
     ipEmbed = discord.Embed(title='__**Printers**__', description=f"```prolog\n{printers.getList()}\n```",
                             color=embedDefaultColor)
     await ctx.reply(embed=ipEmbed)

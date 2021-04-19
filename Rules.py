@@ -28,3 +28,4 @@ class Rules:
              2020: 'https://github.com/WUDBF/WUDBF2021/blob/master/Rules%20Archive/dbf-rules-2020.pdf',
              2021: 'https://github.com/WUDBF/WUDBF2021/blob/master/Rules%20Archive/dbf-rules-2021-final-v01.pdf'
              }
+    {2020: 'Placement: 1, Score: 46', 2021:'Placment: 4, Score:65'}
