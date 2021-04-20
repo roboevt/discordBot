@@ -14,6 +14,5 @@ class Printer(object):
         self.repository = self.github.get_user().get_repo('discordBotPrinter')
 
     def getIp(self):
-        self.ip = self.github.get_user().get_repo('discordBotPrinter').get_contents(
-            'printerip.txt').decoded_content.decode()
+        self.ip = self.repository.get_contents('printerip.txt').decoded_content.decode()
         return self.ip
