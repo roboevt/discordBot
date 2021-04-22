@@ -21,7 +21,7 @@ if __name__ == "__main__":  # These are used in the functions, must be declared 
     events = EventManager()
     person_list = SpaceManager()
     printers = PrinterManager()
-    printers.addPrinter(Printer(name='Hanger Printer', model='Prusa MK3s'))
+    printers.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
     max_occupancy = int(os.getenv('max_occupancy'))
 
 
