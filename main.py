@@ -172,9 +172,13 @@ async def clear(ctx):
     :param ctx: context of the message
     :return: None
     """
-    amount = events.numEvents()
-    events.clearEvents()
-    await ctx.send(str(amount) + ' event(s) cleared. There are now no upcoming events.')
+    isAdmin = str(ctx.message.author.id) in person_list.ppltonotify
+    if isAdmin:
+        amount = events.numEvents()
+        events.clearEvents()
+        await ctx.send(str(amount) + ' event(s) cleared. There are now no upcoming events.')
+    else:
+        await ctx.reply("You are not authorized to perform that command.")
 
 
 @bot.command(name='printerip', help='Returns the current ip address of the Octoprint server')
