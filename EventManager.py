@@ -40,11 +40,13 @@ class EventManager(object):
             return
         if datetime.now(self.serverTimezone) < timeToSend:  # If the event is in the future
             eventAdded = Event(ctx, message, timeToSend, self.serverTimezone)
-            timeDeltaSend = eventAdded.secondsRemaining()
-            eventAdded.future = asyncio.create_task(
-                makeCallback(timeDeltaSend.total_seconds(), self.sendEvent(eventAdded)))
+            print(1)
+            eventAdded.future = await self.sendEvent(eventAdded)
+            print(2)
             self.dictionary[hash(eventAdded)] = eventAdded
+            print(3)
             await ctx.reply(f"Event created. ID:{hash(eventAdded)}")
+            print(4)
         else:
             await ctx.reply('Please enter a time in the future.')
 
@@ -54,8 +56,9 @@ class EventManager(object):
         :param event: The event to send
         :return: None
         """
-        await event.ctx.send(event.message)
-        self.removeEvent(event)
+        print("here")
+        print(event.secondsRemaining().total_seconds())
+        return asyncio.ensure_future(makeCallback(event.secondsRemaining().total_seconds(), event.ctx.send(event.message)))
 
     def removeEvent(self, event: Event) -> None:
         """
