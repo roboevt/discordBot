@@ -140,13 +140,18 @@ async def delete(ctx, eventKey: str):
     :param eventKey: The hash of the Event to be deleted
     :return: None
     """
-    try:
-        events.removeEventByKey(int(eventKey))
-        await ctx.send('Event deleted.')
-    except KeyError:
-        await ctx.send('That event was not found.')
-    except ValueError:
-        await ctx.send('Please enter the number from the list of the reminder you would like to delete')
+    isAdmin = str(ctx.message.author.id) in person_list.ppltonotify
+    isAuthor = ctx.message.author == events.dictionary[int(eventKey)].ctx.message.author
+    if isAdmin or isAuthor:
+        try:
+            events.removeEventByKey(int(eventKey))
+            await ctx.reply('Event deleted.')
+        except KeyError:
+            await ctx.reply('That event was not found.')
+        except ValueError:
+            await ctx.reply('Please enter the number from the list of the reminder you would like to delete')
+    else:
+        await ctx.reply('You are not authorized to delete that message.')
 
 
 @bot.command(name='list', help='Lists all upcoming events with message and time')

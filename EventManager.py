@@ -16,7 +16,7 @@ class EventManager(object):
         self.discordTimezone = pytz.timezone(self.discordTimezoneStr)
         self.serverTimezone = pytz.timezone(self.serverTimezoneStr)
         self.settings = {'TIMEZONE': self.discordTimezoneStr, 'TO_TIMEZONE': self.serverTimezoneStr,
-                         'RETURN_AS_TIMEZONE_AWARE': True}
+                         'RETURN_AS_TIMEZONE_AWARE': True, 'PREFER_DATES_FROM': 'future'}
 
     async def addEvent(self, ctx, message: str, time: str) -> None:
         """
@@ -80,7 +80,8 @@ class EventManager(object):
         for event in self.dictionary.items():
             eventString += f"\nID: {hash(event[1])} \t " \
                            f"Date: {event[1].time.astimezone(self.discordTimezone).strftime('%m/%d/%Y %H:%M')} \n" \
-                           f"Message: '{event[1].message}'\n"
+                           "User: " + str("'" + event[1].ctx.message.author.display_name + "'                         ")[:19] + "\t" \
+                           f"Message: \"{event[1].message}\"\n" #Find a better way to justify the Message section ^^^ Sucks
         return eventString
 
     def removeEventByKey(self, eventKey: int) -> None:
