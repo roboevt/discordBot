@@ -97,7 +97,6 @@ async def getlog(ctx):
 @bot.command(name='resetlog', help='Resets the log of checkins and checkouts')
 async def resetlog(ctx):
     if str(ctx.message.author.id) in person_list.ppltonotify:
-        await person_list.return_file(ctx)
         await person_list.reset()
         await ctx.reply("The log has been reset")
     else:
@@ -178,7 +177,7 @@ async def clear(ctx):
     await ctx.send(str(amount) + ' event(s) cleared. There are now no upcoming events.')
 
 
-@bot.command(name='printerip')
+@bot.command(name='printerip', help='Returns the current ip address of the Octoprint server')
 async def printerip(ctx):
     ipEmbed = discord.Embed(title='__**Printers**__', description=f"```prolog\n{printers.getList()}\n```",
                             color=embedDefaultColor)
