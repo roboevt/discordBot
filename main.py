@@ -96,9 +96,12 @@ async def getlog(ctx):
 
 @bot.command(name='resetlog', help='Resets the log of checkins and checkouts')
 async def resetlog(ctx):
-    global person_list
-    await person_list.reset()
-    await ctx.reply("The log has been reset")
+    if str(ctx.message.author.id) in person_list.ppltonotify:
+        await person_list.return_file(ctx)
+        await person_list.reset()
+        await ctx.reply("The log has been reset")
+    else:
+        await ctx.reply("You do not have permissions to perform this action")
 
 
 @bot.command(name='rules', help='sends the DBF rules for a particular year')

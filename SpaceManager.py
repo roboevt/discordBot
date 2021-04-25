@@ -52,5 +52,8 @@ class SpaceManager:
                 async with aiofiles.open('ppltonotify.txt', 'r') as people:
                     peopleString = await people.read()
                 self.ppltonotify = peopleString.split('\n')
+                for string in self.ppltonotify:
+                    if not string.isnumeric():
+                        self.ppltonotify.remove(string)
         return
     # Since this only runs at the very beginning and init runs it, I am not making this async
