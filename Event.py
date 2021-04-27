@@ -34,4 +34,4 @@ class Event(object):
         return abs(hash((self.ctx, self.message, self.time)))
 
     def secondsRemaining(self):
-        return self.time - datetime.now(self.timezone)
+        return (self.time - datetime.now(self.timezone)).total_seconds()
