@@ -181,7 +181,7 @@ async def clear(ctx):
         await ctx.reply("You are not authorized to perform that command.")
 
 
-@bot.command(name='printerip', help='Returns the current ip address of the Octoprint server')
+@bot.command(name='printers', help='Returns the current ip address of the Octoprint server')
 async def printers(ctx):
     ipEmbed = discord.Embed(title='__**Printers**__', description=f"```prolog\n{printers.getList()}\n```",
                             color=embedDefaultColor)
