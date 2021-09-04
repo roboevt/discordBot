@@ -12,6 +12,7 @@ from PrinterManager import PrinterManager
 from Rules import Rules
 from EventManager import EventManager
 from SpaceManager import SpaceManager
+from Sheets import Sheet
 
 if __name__ == "__main__":  # These are used in the functions, must be declared at beginning.
     load_dotenv()
@@ -23,6 +24,7 @@ if __name__ == "__main__":  # These are used in the functions, must be declared 
     printers = PrinterManager()
     printers.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
     max_occupancy = int(os.getenv('max_occupancy'))
+    Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 
 
 @bot.event
@@ -186,6 +188,12 @@ async def printers(ctx):
     ipEmbed = discord.Embed(title='__**Printers**__', description=f"```prolog\n{printers.getList()}\n```",
                             color=embedDefaultColor)
     await ctx.reply(embed=ipEmbed)
+
+
+@bot.command(name='order', help='Submit a request for purchase. Usage: !order <url> <price> <"reason">')
+async def Order(ctx, product, description, price):
+    Sheets.sendToSheet(product, price, description, ctx)
+    await ctx.reply('Done!')
 
 
 async def notifyPeople(ctx):
