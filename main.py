@@ -190,9 +190,9 @@ async def printers(ctx):
     await ctx.reply(embed=ipEmbed)
 
 
-@bot.command(name='order', help='Submit a request for purchase. Usage: !order <url> <price> <"reason">')
-async def Order(ctx, product, description, price):
-    Sheets.sendToSheet(product, price, description, ctx)
+@bot.command(name='order', help='Submits a request to purchase an item.')
+async def Order(ctx, item, price, url):
+    Sheets.sendToSheet(item, price, url, ctx)
     await ctx.reply('Done!')
 
 

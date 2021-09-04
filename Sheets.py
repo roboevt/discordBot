@@ -36,8 +36,8 @@ class Sheet(object):
         # Call the Sheets API
         self.sheet = self.service.spreadsheets()
 
-    def sendToSheet(self, product, price, description, ctx):
-        outValue = [[product, description, price, str(ctx.author)], []]
+    def sendToSheet(self, item, price, url, ctx):
+        outValue = [[item, price, url, str(ctx.author.name)], []]
         body = {
             'values': outValue
         }
