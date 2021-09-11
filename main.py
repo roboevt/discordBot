@@ -193,7 +193,7 @@ async def printers(ctx):
 @bot.command(name='order', help='Submits a request to purchase an item.')
 async def Order(ctx, item, price, url):
     Sheets.sendToSheet(item, price, url, ctx)
-    await ctx.reply('Done!')
+    await ctx.reply(f"Done! {item} added to spreadsheet.")
 
 
 async def notifyPeople(ctx):
