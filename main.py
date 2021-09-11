@@ -196,6 +196,11 @@ async def Order(ctx, item, price, url):
     await ctx.reply(f"Done! {item} added to spreadsheet.")
 
 
+@bot.command(name='spreadsheet', helo='Returns the url of the spreadsheet')
+async def Spreadsheet(ctx):
+    await ctx.reply(f"Here it is: {Sheets.url()}")
+
+
 async def notifyPeople(ctx):
     for person in person_list.ppltonotify:
         converter = commands.MemberConverter()

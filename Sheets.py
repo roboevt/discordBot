@@ -44,3 +44,6 @@ class Sheet(object):
         self.service.spreadsheets().values().append(
             spreadsheetId=self.SPREADSHEET_ID, range="A2",
             valueInputOption="RAW", body=body).execute()
+
+    def url(self):
+        return 'https://docs.google.com/spreadsheets/d/' + self.SPREADSHEET_ID  # Magic number
