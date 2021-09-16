@@ -1,5 +1,8 @@
 from __future__ import print_function
 import os.path
+
+import httplib2
+from googleapiclient import discovery
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -7,7 +10,7 @@ from google.oauth2.credentials import Credentials
 
 
 class Sheet(object):
-    def __init__(self, SPREADSHEET_ID):
+    def __init__(self, SPREADSHEET_ID):  # Mainly code from the google sheets python quickstart, could be improved.
         # If modifying these scopes, delete the file token.json.
         self.SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
@@ -36,8 +39,8 @@ class Sheet(object):
         # Call the Sheets API
         self.sheet = self.service.spreadsheets()
 
-    def sendToSheet(self, item, price, url, ctx):
-        outValue = [[item, price, url, str(ctx.author.name)], []]
+    def sendToSheet(self, item, price, quantity, url, ctx):
+        outValue = [[item, price, quantity, url, str(ctx.author.name)], []]
         body = {
             'values': outValue
         }

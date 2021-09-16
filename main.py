@@ -14,7 +14,7 @@ from EventManager import EventManager
 from SpaceManager import SpaceManager
 from Sheets import Sheet
 
-if __name__ == "__main__":  # These are used in the functions, must be declared at beginning.
+if __name__ == "__main__":  # These variables are used in the functions, must be declared at beginning.
     load_dotenv()
     TOKEN = os.getenv('DISCORD_TOKEN')
     embedDefaultColor = int(os.getenv('embedDefaultColor'), 16)
@@ -62,7 +62,7 @@ async def test(ctx):
     await ctx.reply('test success!')
 
 
-@bot.command(name='checkin', help='Lets people check into the DBF space.')
+@bot.command(name='checkin', help='Checks you into the DBF space.')
 async def checkin(ctx):
     if ctx.message.author.display_name in person_list.occupants:
         await ctx.reply("You're already checked in!")
@@ -81,7 +81,7 @@ async def checkin(ctx):
         await ctx.reply('You are all checked in! Welcome to the DBF space!')
 
 
-@bot.command(name='checkout', help='Lets people check out the DBF space.')
+@bot.command(name='checkout', help='Checks you out the DBF space.')
 async def checkout(ctx):
     if ctx.message.author.display_name in person_list.occupants:
         person_list.occupants.remove(ctx.message.author.display_name)
@@ -105,7 +105,7 @@ async def resetlog(ctx):
         await ctx.reply("You do not have permissions to perform this action")
 
 
-@bot.command(name='rules', help='sends the DBF rules for a particular year')
+@bot.command(name='rules', help='Sends the DBF rules for a particular year')
 async def rules(ctx, year: str):
     """
     Replies with the rules for the specified year
@@ -133,7 +133,7 @@ async def remindme(ctx, message: str, time: str):
     await events.addEvent(ctx, message, time)
 
 
-@bot.command(name='delete', help='Deletes an event. Ex: !delete 2. Use !list to get event numbers.')
+@bot.command(name='delete', help='Deletes an event. Ex: <delete 2>. Use list command to get event numbers.')
 async def delete(ctx, eventKey: str):
     """
     Deletes an Event
@@ -141,7 +141,7 @@ async def delete(ctx, eventKey: str):
     :param eventKey: The hash of the Event to be deleted
     :return: None
     """
-    isAdmin = str(ctx.message.author.id) in person_list.ppltonotify
+    isAdmin = str(ctx.message.author.id) in person_list.ppltonotify  # Could have a more official list of Admins.
     isAuthor = ctx.message.author == events.dictionary[int(eventKey)].ctx.message.author
     if isAdmin or isAuthor:
         try:
@@ -185,23 +185,46 @@ async def clear(ctx):
 
 @bot.command(name='printers', help='Returns the current ip address of the Octoprint server')
 async def printers(ctx):
+    """
+    Sends a list of all printers and their Octopi's IP address. Should work with more than one, but not yet tested.
+    :param ctx: context of the message
+    :return: None
+    """
     ipEmbed = discord.Embed(title='__**Printers**__', description=f"```prolog\n{printers.getList()}\n```",
                             color=embedDefaultColor)
     await ctx.reply(embed=ipEmbed)
 
 
 @bot.command(name='order', help='Submits a request to purchase an item.')
-async def Order(ctx, item, price, url):
-    Sheets.sendToSheet(item, price, url, ctx)
+async def Order(ctx, item, price, quantity, url):
+    """
+    Submits an item to the DBF request form.
+    :param ctx: the context of the message
+    :param item: name of the item
+    :param price: price
+    :param url: url at which it can be purchased
+    :return: None
+    """
+    Sheets.sendToSheet(item, price, quantity, url, ctx)
     await ctx.reply(f"Done! {item} added to spreadsheet.")
 
 
 @bot.command(name='spreadsheet', helo='Returns the url of the spreadsheet')
 async def Spreadsheet(ctx):
+    """
+    Responds with the url of the DBF request form spreadsheet.
+    :param ctx: context of the message
+    :return: None
+    """
     await ctx.reply(f"Here it is: {Sheets.url()}")
 
 
 async def notifyPeople(ctx):
+    """
+    Sends a Direct Message to club leadership that too many people are in the space
+    :param ctx: context of the message
+    :return: None
+    """
     for person in person_list.ppltonotify:
         converter = commands.MemberConverter()
         member = await converter.convert(ctx, person)

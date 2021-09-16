@@ -20,7 +20,7 @@ class Event(object):
 
     def __eq__(self, other):
         """
-        Checks if this Event is equivalent to another one.
+        Checks if this Event is equal to another one.
         :param other: The other Event to check against
         :return: Boolean
         """
@@ -31,7 +31,7 @@ class Event(object):
         Hashes this event
         :return: int
         """
-        return abs(hash((self.ctx, self.message, self.time)))
+        return abs(hash((self.ctx, self.message, self.time)))  # Absolute value limits total options, but stil a ton.
 
     def secondsRemaining(self):
         return (self.time - datetime.now(self.timezone)).total_seconds()
