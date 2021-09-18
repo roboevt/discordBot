@@ -209,7 +209,7 @@ async def Order(ctx, item, price, quantity, url):
     await ctx.reply(f"Done! {item} added to spreadsheet.")
 
 
-@bot.command(name='spreadsheet', helo='Returns the url of the spreadsheet')
+@bot.command(name='spreadsheet', help='Returns the url of the spreadsheet')
 async def Spreadsheet(ctx):
     """
     Responds with the url of the DBF request form spreadsheet.
