@@ -202,6 +202,7 @@ async def Order(ctx, item, price, quantity, url):
     :param ctx: the context of the message
     :param item: name of the item
     :param price: price
+    :param quantity: quantity
     :param url: url at which it can be purchased
     :return: None
     """
