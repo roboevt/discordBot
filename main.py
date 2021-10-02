@@ -1,3 +1,4 @@
+import asyncio
 import os
 import discord
 import socket
@@ -6,6 +7,7 @@ from datetime import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
 from github import Github
+import time
 
 from Printer import Printer
 from PrinterManager import PrinterManager
@@ -21,8 +23,8 @@ if __name__ == "__main__":  # These variables are used in the functions, must be
     bot = commands.Bot(command_prefix=os.getenv('command_prefix'))
     events = EventManager()
     person_list = SpaceManager()
-    printers = PrinterManager()
-    printers.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
+    printersManager = PrinterManager()
+    printersManager.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
     max_occupancy = int(os.getenv('max_occupancy'))
     Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 
@@ -46,6 +48,7 @@ async def on_command_error(ctx, error):
     :param error: the error
     :return: None
     """
+    print(error)
     if isinstance(error, commands.CommandNotFound):
         await ctx.reply('That command is not recognized, please try again.')
     else:
@@ -190,7 +193,7 @@ async def printers(ctx):
     :param ctx: context of the message
     :return: None
     """
-    ipEmbed = discord.Embed(title='__**Printers**__', description=f"```prolog\n{printers.getList()}\n```",
+    ipEmbed = discord.Embed(title='__**Printers**__', description=f"```prolog\n{printersManager.getList()}\n```",
                             color=embedDefaultColor)
     await ctx.reply(embed=ipEmbed)
 
