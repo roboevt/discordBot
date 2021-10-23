@@ -49,6 +49,7 @@ async def on_command_error(ctx, error):
     :return: None
     """
     print(error)
+    await ctx.reply(error)
     if isinstance(error, commands.CommandNotFound):
         await ctx.reply('That command is not recognized, please try again.')
     else:

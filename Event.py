@@ -31,7 +31,7 @@ class Event(object):
         Hashes this event
         :return: int
         """
-        return abs(hash((self.ctx, self.message, self.time)))  # Absolute value limits total options, but stil a ton.
+        return abs(hash((self.ctx, self.message, self.time)))  # Absolute value limits total options, but still a ton.
 
     def secondsRemaining(self):
         return (self.time - datetime.now(self.timezone)).total_seconds()
