@@ -36,7 +36,7 @@ async def on_ready():
     :return: None
     """
     print('Program connected')
-    await person_list.reset()
+    #await person_list.reset()
     await person_list.readFromFile()
 
 
@@ -64,7 +64,7 @@ async def test(ctx):
     """
     await ctx.reply('test success!')
 
-
+"""
 @bot.command(name='checkin', help='Checks you into the DBF space.')
 async def checkin(ctx):
     if ctx.message.author.display_name in person_list.occupants:
@@ -106,7 +106,7 @@ async def resetlog(ctx):
         await ctx.reply("The log has been reset")
     else:
         await ctx.reply("You do not have permissions to perform this action")
-
+"""
 
 @bot.command(name='rules', help='Sends the DBF rules for a particular year')
 async def rules(ctx, year: str):

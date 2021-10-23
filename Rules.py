@@ -1,7 +1,7 @@
 # Simply a dictionary mapping years to links.
 # To add another year add another entry with the year and new link.
 
-# At some point this should be reworked to automatically pull from github, so that adding another year's rules is as
+# At some point this should be reworked to automatically pull from github,  so that adding another year's rules is as
 # simple as adding it to the github repository, instead of having to change this bot's code.
 
 # Could also add a way to return the score and placement of the team for various years.
