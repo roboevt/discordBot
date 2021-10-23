@@ -18,6 +18,8 @@ from Sheets import Sheet
 
 from fastapi import FastAPI
 
+app = FastAPI()
+
 if __name__ == "__main__":  # These variables are used in the functions, must be declared at beginning.
     load_dotenv()
     TOKEN = os.getenv('DISCORD_TOKEN')
@@ -29,8 +31,6 @@ if __name__ == "__main__":  # These variables are used in the functions, must be
     printersManager.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
     max_occupancy = int(os.getenv('max_occupancy'))
     Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
-
-    app = FastAPI()
 
 
 @app.get("/printerip/{printerip}")
