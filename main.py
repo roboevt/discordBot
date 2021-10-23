@@ -30,11 +30,11 @@ if __name__ == "__main__":  # These variables are used in the functions, must be
     max_occupancy = int(os.getenv('max_occupancy'))
     Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 
-    app = FastAPI()
+app = FastAPI()
 
 
 @app.get("{printerip}")
-async def recieveIP(self, printerip):
+def recieveIP(printerip):
     print(f"Recieved printerip: {printerip}")
 
 @bot.event
