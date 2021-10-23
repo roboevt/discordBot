@@ -20,22 +20,23 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-if __name__ == "__main__":  # These variables are used in the functions, must be declared at beginning.
-    load_dotenv()
-    TOKEN = os.getenv('DISCORD_TOKEN')
-    embedDefaultColor = int(os.getenv('embedDefaultColor'), 16)
-    bot = commands.Bot(command_prefix=os.getenv('command_prefix'))
-    events = EventManager()
-    person_list = SpaceManager()
-    printersManager = PrinterManager()
-    printersManager.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
-    max_occupancy = int(os.getenv('max_occupancy'))
-    Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
+#if __name__ == "__main__":  # These variables are used in the functions, must be declared at beginning.
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
+embedDefaultColor = int(os.getenv('embedDefaultColor'), 16)
+bot = commands.Bot(command_prefix=os.getenv('command_prefix'))
+events = EventManager()
+person_list = SpaceManager()
+printersManager = PrinterManager()
+printersManager.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
+max_occupancy = int(os.getenv('max_occupancy'))
+Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 
-    @app.get("/printerip/{printerip}")
-    def recieveIP(printerip):
-        print(f"Recieved printerip: {printerip}")
-        return("printerip", "q")
+
+@app.get("/printerip/{printerip}")
+def recieveIP(printerip):
+    print(f"Recieved printerip: {printerip}")
+    return("printerip", "q")
 
 @bot.event
 async def on_ready():
