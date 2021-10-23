@@ -16,6 +16,8 @@ from EventManager import EventManager
 from SpaceManager import SpaceManager
 from Sheets import Sheet
 
+from fastapi import FastAPI
+
 if __name__ == "__main__":  # These variables are used in the functions, must be declared at beginning.
     load_dotenv()
     TOKEN = os.getenv('DISCORD_TOKEN')
@@ -28,6 +30,12 @@ if __name__ == "__main__":  # These variables are used in the functions, must be
     max_occupancy = int(os.getenv('max_occupancy'))
     Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 
+    app = FastAPI()
+
+
+@app.get("{printerip}")
+async def recieveIP(self, printerip):
+    print(f"Recieved printerip: {printerip}")
 
 @bot.event
 async def on_ready():
