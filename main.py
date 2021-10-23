@@ -33,9 +33,10 @@ Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 app = FastAPI()
 
 
-@app.get("{printerip}")
+@app.get("/printerip/{printerip}")
 def recieveIP(printerip):
     print(f"Recieved printerip: {printerip}")
+    return("printerip", "q")
 
 @bot.event
 async def on_ready():
