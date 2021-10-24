@@ -9,7 +9,7 @@ class PrinterManager(object):
     def addPrinter(self, printerDetails: str):
         printerDetails = printerDetails.split(',')
         for printer in self.printerList:
-            if printer.name is printerDetails[0] and printer.model is printerDetails[1]:
+            if printer.name == printerDetails[0] and printer.model == printerDetails[1]:
                 printer.ip = printerDetails[2]
                 return
         self.printerList.append(Printer(printerDetails[0], printerDetails[1], printerDetails[2]))
