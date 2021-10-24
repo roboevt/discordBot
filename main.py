@@ -28,21 +28,20 @@ bot = commands.Bot(command_prefix=os.getenv('command_prefix'))
 events = EventManager()
 person_list = SpaceManager()
 printersManager = PrinterManager()
-#printersManager.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
 max_occupancy = int(os.getenv('max_occupancy'))
 Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
+
 
 @app.on_event("startup")
 async def startup_event():
     asyncio.create_task(bot.start(TOKEN))
-    await asyncio.sleep(4)
-    print(f"{bot.user} has connected to Discord")
+
 
 @app.get("/printerip/{printerDetails}")
 def receivePrinter(printerDetails):
     print(f"Received printerip: {printerDetails}")
     printersManager.addPrinter(printerDetails)
-    return("printerDetails")
+
 
 @bot.event
 async def on_ready():
@@ -50,7 +49,7 @@ async def on_ready():
     Code to run when the bot first connects to Discord
     :return: None
     """
-    print('Program connected')
+    print(f"{bot.user} has connected to Discord")
     #await person_list.reset()
     await person_list.readFromFile()
 
@@ -80,49 +79,6 @@ async def test(ctx):
     """
     await ctx.reply('test success!')
 
-"""
-@bot.command(name='checkin', help='Checks you into the DBF space.')
-async def checkin(ctx):
-    if ctx.message.author.display_name in person_list.occupants:
-        await ctx.reply("You're already checked in!")
-    else:
-        if len(person_list.occupants) >= max_occupancy:
-            print("too many people")
-            await notifyPeople(ctx)
-            await ctx.reply("Warning: There are already " + str(
-                len(person_list.occupants)) + " people in the space! There can only be " + str(
-                max_occupancy) + " people at a time!")
-            await person_list.write_to_log(ctx, True, True)
-        else:
-            await person_list.write_to_log(ctx, True, False)
-        person_list.occupants.append(ctx.message.author.display_name)
-
-        await ctx.reply('You are all checked in! Welcome to the DBF space!')
-
-
-@bot.command(name='checkout', help='Checks you out the DBF space.')
-async def checkout(ctx):
-    if ctx.message.author.display_name in person_list.occupants:
-        person_list.occupants.remove(ctx.message.author.display_name)
-        await person_list.write_to_log(ctx, False, False)
-        await ctx.reply('You are all checked out! Thanks for visiting the DBF space!')
-    else:
-        await ctx.reply("You aren't checked in!")
-
-
-@bot.command(name='getlog', help='Returns a text file with checkins and checkouts')
-async def getlog(ctx):
-    await person_list.return_file(ctx)
-
-
-@bot.command(name='resetlog', help='Resets the log of checkins and checkouts')
-async def resetlog(ctx):
-    if str(ctx.message.author.id) in person_list.ppltonotify:
-        await person_list.reset()
-        await ctx.reply("The log has been reset")
-    else:
-        await ctx.reply("You do not have permissions to perform this action")
-"""
 
 @bot.command(name='rules', help='Sends the DBF rules for a particular year')
 async def rules(ctx, year: str):
@@ -251,8 +207,50 @@ async def notifyPeople(ctx):
         await member.send("The space is over capacity!")
 
 
-#if __name__ == '__main__':  # This must run after the functions are declared
-#    bot.run(TOKEN)
+"""
+@bot.command(name='checkin', help='Checks you into the DBF space.')
+async def checkin(ctx):
+    if ctx.message.author.display_name in person_list.occupants:
+        await ctx.reply("You're already checked in!")
+    else:
+        if len(person_list.occupants) >= max_occupancy:
+            print("too many people")
+            await notifyPeople(ctx)
+            await ctx.reply("Warning: There are already " + str(
+                len(person_list.occupants)) + " people in the space! There can only be " + str(
+                max_occupancy) + " people at a time!")
+            await person_list.write_to_log(ctx, True, True)
+        else:
+            await person_list.write_to_log(ctx, True, False)
+        person_list.occupants.append(ctx.message.author.display_name)
+
+        await ctx.reply('You are all checked in! Welcome to the DBF space!')
+
+
+@bot.command(name='checkout', help='Checks you out the DBF space.')
+async def checkout(ctx):
+    if ctx.message.author.display_name in person_list.occupants:
+        person_list.occupants.remove(ctx.message.author.display_name)
+        await person_list.write_to_log(ctx, False, False)
+        await ctx.reply('You are all checked out! Thanks for visiting the DBF space!')
+    else:
+        await ctx.reply("You aren't checked in!")
+
+
+@bot.command(name='getlog', help='Returns a text file with checkins and checkouts')
+async def getlog(ctx):
+    await person_list.return_file(ctx)
+
+
+@bot.command(name='resetlog', help='Resets the log of checkins and checkouts')
+async def resetlog(ctx):
+    if str(ctx.message.author.id) in person_list.ppltonotify:
+        await person_list.reset()
+        await ctx.reply("The log has been reset")
+    else:
+        await ctx.reply("You do not have permissions to perform this action")
+"""
+
 
 if __name__ == "__main__":  # fastApi does not work with this if statement
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, )
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
