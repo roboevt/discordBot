@@ -1,9 +1,6 @@
 import os
 from dotenv import load_dotenv
 from github import Github
-from fastapi import FastAPI
-
-app = FastAPI()
 
 
 class Printer(object):
@@ -17,11 +14,5 @@ class Printer(object):
 
         self.repository = self.github.get_user().get_repo('discordBotPrinter')
 
-    @app.get("{printerip}")
-    async def recieveIP(self, printerip):
-        print(f"Recieved printerip: {printerip}")
-        self.ip = printerip
-
     def getIp(self):
-        print(f"Returning printerip: {self.ip}")
         return self.ip
