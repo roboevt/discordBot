@@ -163,6 +163,12 @@ async def printers(ctx):
     await ctx.reply(embed=ipEmbed)
 
 
+@bot.command(name='clearPrinters', help='Resets the list of printers')
+async def clearPrinters(ctx):
+    printersManager.clearList()
+    await ctx.reply('The printers have been reset')
+
+
 @bot.command(name='order', help='Submits a request to purchase an item.')
 async def Order(ctx, item, price, quantity, url):
     """

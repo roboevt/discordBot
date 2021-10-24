@@ -20,3 +20,6 @@ class PrinterManager(object):
         for printer in self.printerList:
             printerString += f"Name:`{printer.name}`\nModel:`{printer.model}`\tIP:{printer.getIp()}\n"
         return printerString
+
+    def clearList(self):
+        self.printerList.clear()
