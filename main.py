@@ -28,7 +28,7 @@ bot = commands.Bot(command_prefix=os.getenv('command_prefix'))
 events = EventManager()
 person_list = SpaceManager()
 printersManager = PrinterManager()
-printersManager.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
+#printersManager.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
 max_occupancy = int(os.getenv('max_occupancy'))
 Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 

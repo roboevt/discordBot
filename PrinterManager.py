@@ -7,7 +7,7 @@ class PrinterManager(object):
         load_dotenv()
         self.printerList = []
 
-    def addPrinter(self, printerDetails):
+    def addPrinter(self, printerDetails: str):
         printerDetails = printerDetails.split(',')
         for printer in self.printerList:
             if printer.name is printerDetails[0] and printer.model is printerDetails[1]:
