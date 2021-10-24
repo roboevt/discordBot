@@ -4,7 +4,6 @@ from Printer import Printer
 
 class PrinterManager(object):
     def __init__(self):
-        load_dotenv()
         self.printerList = []
 
     def addPrinter(self, printerDetails: str):
