@@ -32,9 +32,11 @@ printersManager = PrinterManager()
 max_occupancy = int(os.getenv('max_occupancy'))
 Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 
-if __name__ == "__main__":  # fastApi does not work with this if statement
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, )
-
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(bot.start(TOKEN))
+    await asyncio.sleep(4)
+    print(f"{bot.user} has connected to Discord")
 
 @app.get("/printerip/{printerDetails}")
 def receivePrinter(printerDetails):
@@ -249,5 +251,8 @@ async def notifyPeople(ctx):
         await member.send("The space is over capacity!")
 
 
-if __name__ == '__main__':  # This must run after the functions are declared
-    bot.run(TOKEN)
+#if __name__ == '__main__':  # This must run after the functions are declared
+#    bot.run(TOKEN)
+
+if __name__ == "__main__":  # fastApi does not work with this if statement
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, )
