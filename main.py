@@ -36,7 +36,7 @@ Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 @app.get("/printerip/{printerDetails}")
 def receivePrinter(printerDetails):
     print(f"Received printerip: {printerDetails}")
-    printers.addPrinter(printerDetails)
+    printersManager.addPrinter(printerDetails)
     return("printerDetails")
 
 @bot.event
