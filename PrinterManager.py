@@ -1,6 +1,4 @@
 from dotenv import load_dotenv
-import os
-from github import Github
 from Printer import Printer
 
 
@@ -9,8 +7,13 @@ class PrinterManager(object):
         load_dotenv()
         self.printerList = []
 
-    def addPrinter(self, printer):
-        self.printerList.append(printer)
+    def addPrinter(self, printerDetails):
+        printerDetails = printerDetails.split(',')
+        for printer in self.printerList:
+            if printer.name is printerDetails[0] and printer.model is printerDetails[1]:
+                printer.ip = printerDetails[2]
+                return
+        self.printerList.append(Printer(printerDetails[0], printerDetails[1], printerDetails[2]))
 
     def getList(self):
         printerString = ''

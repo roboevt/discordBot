@@ -20,7 +20,7 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-#if __name__ == "__main__":  # These variables are used in the functions, must be declared at beginning.
+#if __name__ == "__main__":  # fastApi does not work with this if statement
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 embedDefaultColor = int(os.getenv('embedDefaultColor'), 16)
@@ -33,10 +33,11 @@ max_occupancy = int(os.getenv('max_occupancy'))
 Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 
 
-@app.get("/printerip/{printerip}")
-def recieveIP(printerip):
-    print(f"Recieved printerip: {printerip}")
-    return("printerip", "q")
+@app.get("/printerip/{printerDetails}")
+def receivePrinter(printerDetails):
+    print(f"Received printerip: {printerDetails}")
+    printers.addPrinter(printerDetails)
+    return("printerDetails")
 
 @bot.event
 async def on_ready():
