@@ -17,10 +17,10 @@ from SpaceManager import SpaceManager
 from Sheets import Sheet
 
 from fastapi import FastAPI
+import uvicorn
 
 app = FastAPI()
 
-#if __name__ == "__main__":  # fastApi does not work with this if statement
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 embedDefaultColor = int(os.getenv('embedDefaultColor'), 16)
@@ -31,6 +31,9 @@ printersManager = PrinterManager()
 #printersManager.addPrinter(Printer(name='Hangar Printer', model='Prusa MK3s'))
 max_occupancy = int(os.getenv('max_occupancy'))
 Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
+
+if __name__ == "__main__":  # fastApi does not work with this if statement
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, )
 
 
 @app.get("/printerip/{printerDetails}")
