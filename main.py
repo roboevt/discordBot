@@ -1,26 +1,18 @@
 import asyncio
 import os
 import discord
-import socket
-from datetime import datetime
-
 from discord.ext import commands
 from dotenv import load_dotenv
-from github import Github
-import time
-
-from Printer import Printer
 from PrinterManager import PrinterManager
 from Rules import Rules
 from EventManager import EventManager
 from SpaceManager import SpaceManager
 from Sheets import Sheet
-
 from fastapi import FastAPI
 import uvicorn
 
-app = FastAPI()
 
+app = FastAPI()
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 embedDefaultColor = int(os.getenv('embedDefaultColor'), 16)
@@ -35,6 +27,7 @@ Sheets = Sheet(os.getenv('SPREADSHEET_ID'))
 @app.on_event("startup")
 async def startup_event():
     asyncio.create_task(bot.start(TOKEN))
+    await asyncio.sleep(1)
 
 
 @app.get("/printerip/{printerDetails}")
@@ -63,7 +56,7 @@ async def on_command_error(ctx, error):
     :return: None
     """
     print(error)
-    await ctx.reply(error)
+    # await ctx.reply(error)  # Hint! Hint! to anyone looking to improve the error reporting
     if isinstance(error, commands.CommandNotFound):
         await ctx.reply('That command is not recognized, please try again.')
     else:
