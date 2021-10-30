@@ -23,3 +23,7 @@ class PrinterManager(object):
 
     def clearList(self):
         self.printerList.clear()
+
+#rest semantics
+#with forms
+#don't use commas to seperate data

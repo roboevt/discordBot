@@ -251,5 +251,5 @@ async def resetlog(ctx):
 """
 
 
-if __name__ == "__main__":  # fastApi does not work with this if statement
+if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
